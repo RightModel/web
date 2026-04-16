@@ -1,0 +1,12 @@
+slug: add-role-based-access-control
+title: Add Role Based Access Control
+description: Implement role checks and route guards for a contained app surface with known permissions.
+tier: moderate
+related_slugs:
+  - refactor-authentication-middleware
+  - audit-authentication-flow
+  - design-multi-tenant-permissions
+seo:
+  h1: Which AI model should you use to add role based access control?
+  meta_description: RBAC implementation is moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
+  title_tag: Best AI model for RBAC work — rightmodel

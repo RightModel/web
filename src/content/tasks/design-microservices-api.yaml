@@ -1,0 +1,12 @@
+slug: design-microservices-api
+title: Design a Microservices API Boundary
+description: Plan service boundaries, API contracts, and failure handling across several cooperating services.
+tier: deep
+related_slugs:
+  - design-event-driven-architecture
+  - design-caching-strategy
+  - design-database-schema-saas
+seo:
+  h1: Which AI model should you use to design a microservices API?
+  meta_description: Microservices API design needs deeper reasoning. Use Claude Opus 4. Claude Sonnet 4 is cheaper, but this is worth paying up.
+  title_tag: Best AI model for microservices APIs — rightmodel

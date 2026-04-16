@@ -1,0 +1,12 @@
+slug: write-git-commit-message
+title: Write a Git Commit Message
+description: Turn a diff summary into a concise commit message with clear intent and scope.
+tier: routine
+related_slugs:
+  - summarize-pull-request
+  - rename-variables-consistently
+  - write-cli-usage-examples
+seo:
+  h1: Which AI model should you use to write a Git commit message?
+  meta_description: Commit message writing is routine work. Use Gemini Flash 2.0. Claude Sonnet 4 is ~9× pricier here.
+  title_tag: Best AI model for commit messages — rightmodel

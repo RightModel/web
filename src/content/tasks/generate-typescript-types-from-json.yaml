@@ -1,0 +1,12 @@
+slug: generate-typescript-types-from-json
+title: Generate TypeScript Types from JSON
+description: Turn a sample JSON payload into clean TypeScript types for predictable application data.
+tier: routine
+related_slugs:
+  - generate-openapi-schema-example
+  - format-json-payload
+  - migrate-javascript-to-typescript
+seo:
+  h1: Which AI model should you use to generate TypeScript types from JSON?
+  meta_description: Generating types from JSON is routine work. Use Gemini Flash 2.0. Claude Sonnet 4 is ~9× pricier here.
+  title_tag: Best AI model for JSON to TS types — rightmodel

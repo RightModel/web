@@ -1,0 +1,12 @@
+slug: rename-variables-consistently
+title: Rename Variables Consistently Across Code
+description: Suggest clear variable renames that stay consistent across a contained code snippet.
+tier: routine
+related_slugs:
+  - refactor-legacy-javascript-module
+  - refactor-react-component-hooks
+  - write-git-commit-message
+seo:
+  h1: Which AI model should you use to rename variables consistently in code?
+  meta_description: Variable renaming is routine work. Use Gemini Flash 2.0. Claude Sonnet 4 is ~9× pricier here.
+  title_tag: Best AI model for variable renaming — rightmodel

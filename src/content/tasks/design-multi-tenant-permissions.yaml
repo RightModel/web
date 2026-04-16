@@ -1,0 +1,12 @@
+slug: design-multi-tenant-permissions
+title: Design Multi Tenant Permissions
+description: Plan tenant aware permissions, scope boundaries, and cross tenant safety rules for an app.
+tier: deep
+related_slugs:
+  - design-database-schema-saas
+  - add-role-based-access-control
+  - audit-authentication-flow
+seo:
+  h1: Which AI model should you use to design multi tenant permissions?
+  meta_description: Multi tenant permissions need deeper reasoning. Use Claude Opus 4. Claude Sonnet 4 is cheaper, but this is worth paying up.
+  title_tag: Best AI model for tenant permissions — rightmodel

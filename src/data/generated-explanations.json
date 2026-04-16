@@ -1,0 +1,43 @@
+{
+  "generated_at": "2026-04-16T00:00:00Z",
+  "tiers": {
+    "all": {
+      "routine": {
+        "key": "routine-default",
+        "explanation": "This task is bounded and predictable, so a smaller model handles it without leaving quality on the table. Reaching for a larger tier here adds cost faster than it improves the output.",
+        "overkill_note": "A larger model is overkill here.",
+        "context_note": "If you are attaching a large codebase, say so. Context size can shift the recommendation.",
+        "blindspot_variants": [
+          "Got a large codebase attached? Mention it - context size can shift this recommendation.",
+          "If there is more context than fits in one sentence, paste it here - that can change the pick.",
+          "A bigger codebase or longer prompt can change the answer. Mention that context if it matters."
+        ]
+      },
+      "moderate": {
+        "key": "moderate-default",
+        "explanation": "This work needs synthesis and solid coding ability, but it still lives inside a clear task boundary. Moving to a frontier tier usually costs more than the extra reasoning is worth here.",
+        "overkill_note": "The next tier up is usually overkill for this kind of task.",
+        "context_note": "If this spans multiple systems or a large repo, add that context for a stronger recommendation.",
+        "blindspot_variants": [
+          "If this touches multiple systems, say that plainly - it may justify a larger model.",
+          "Large repo context or hidden constraints can move this upward. Add them if they matter.",
+          "This recommendation is based on the task description only. Extra codebase context can shift it."
+        ]
+      },
+      "deep": {
+        "key": "deep-default",
+        "explanation": "The task description signals deeper reasoning, trade-off analysis, or risk-heavy judgement. A larger tier earns its cost here because it handles longer reasoning chains and ambiguity more reliably.",
+        "overkill_note": "This is one of the cases where paying for more reasoning is justified.",
+        "context_note": "If production constraints or system boundaries matter, include them - they sharpen the recommendation.",
+        "blindspot_variants": [
+          "If there are hard constraints like latency, team size, or migration risk, add them for a tighter read.",
+          "System boundaries and production constraints matter here. Include them if you have them.",
+          "Deep work depends on context. Mention repo size, systems involved, or risk areas for a better answer."
+        ]
+      }
+    },
+    "anthropic": {},
+    "google": {},
+    "openai": {}
+  }
+}

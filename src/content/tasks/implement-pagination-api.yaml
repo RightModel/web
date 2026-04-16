@@ -1,0 +1,12 @@
+slug: implement-pagination-api
+title: Implement Pagination in an API
+description: Add pagination parameters, response metadata, and predictable query behaviour to an API.
+tier: moderate
+related_slugs:
+  - implement-rest-api-endpoint
+  - write-api-documentation
+  - write-database-migration
+seo:
+  h1: Which AI model should you use to implement pagination in an API?
+  meta_description: API pagination is moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
+  title_tag: Best AI model for API pagination — rightmodel

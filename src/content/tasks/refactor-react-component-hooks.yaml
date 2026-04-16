@@ -1,0 +1,12 @@
+slug: refactor-react-component-hooks
+title: Refactor a React Component to Hooks
+description: Convert a class based React component to hooks with predictable state and effect changes.
+tier: moderate
+related_slugs:
+  - extract-reusable-component
+  - refactor-redux-to-context
+  - migrate-javascript-to-typescript
+seo:
+  h1: Which AI model should you use to refactor a React component to hooks?
+  meta_description: React hook refactors are moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
+  title_tag: Best AI model for React hook refactors — rightmodel

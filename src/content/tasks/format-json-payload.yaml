@@ -1,0 +1,12 @@
+slug: format-json-payload
+title: Format a JSON Payload Cleanly
+description: Clean up a JSON payload for readability, validation, or quick inspection during development.
+tier: routine
+related_slugs:
+  - generate-typescript-types-from-json
+  - convert-curl-to-fetch
+  - generate-openapi-schema-example
+seo:
+  h1: Which AI model should you use to format a JSON payload?
+  meta_description: Formatting JSON is routine work. Use Gemini Flash 2.0. Claude Sonnet 4 is ~9× pricier here.
+  title_tag: Best AI model for JSON formatting — rightmodel

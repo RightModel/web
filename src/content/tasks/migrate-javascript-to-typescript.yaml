@@ -1,0 +1,12 @@
+slug: migrate-javascript-to-typescript
+title: Migrate JavaScript Module to TypeScript
+description: Convert a JavaScript module to TypeScript while preserving exports, behaviour, and type safety.
+tier: moderate
+related_slugs:
+  - refactor-react-component-hooks
+  - generate-typescript-types-from-json
+  - refactor-legacy-javascript-module
+seo:
+  h1: Which AI model should you use to migrate JavaScript code to TypeScript?
+  meta_description: JS to TS migrations are moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
+  title_tag: Best AI model for JS to TS migrations — rightmodel

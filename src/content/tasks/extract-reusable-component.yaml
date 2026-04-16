@@ -1,0 +1,12 @@
+slug: extract-reusable-component
+title: Extract a Reusable UI Component
+description: Pull repeated UI code into a reusable component with clear props and low behavioural risk.
+tier: moderate
+related_slugs:
+  - refactor-react-component-hooks
+  - implement-form-validation
+  - refactor-redux-to-context
+seo:
+  h1: Which AI model should you use to extract a reusable UI component?
+  meta_description: Component extraction is moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
+  title_tag: Best AI model for UI component extraction — rightmodel

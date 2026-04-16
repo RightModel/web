@@ -1,0 +1,12 @@
+slug: convert-curl-to-fetch
+title: Convert cURL Command to Fetch
+description: Turn a working cURL example into a browser or Node fetch call with matching headers.
+tier: routine
+related_slugs:
+  - format-json-payload
+  - integrate-third-party-api
+  - implement-rest-api-endpoint
+seo:
+  h1: Which AI model should you use to convert a cURL command to fetch?
+  meta_description: Converting cURL to fetch is routine work. Use Gemini Flash 2.0. Claude Sonnet 4 is ~9× pricier here.
+  title_tag: Best AI model for cURL to fetch — rightmodel

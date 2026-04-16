@@ -1,0 +1,12 @@
+slug: fix-failing-unit-test
+title: Fix a Failing Unit Test
+description: Diagnose a failing test with a known assertion, fixture, or mock mismatch in a small scope.
+tier: moderate
+related_slugs:
+  - write-unit-tests-express-api
+  - debug-ci-pipeline-failure
+  - summarize-log-output
+seo:
+  h1: Which AI model should you use to fix a failing unit test?
+  meta_description: Fixing a failing test is moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
+  title_tag: Best AI model for failing tests — rightmodel

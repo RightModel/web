@@ -1,0 +1,12 @@
+slug: write-dockerfile
+title: Write a Dockerfile for an App
+description: Draft a Dockerfile with sensible base image, build steps, and runtime defaults for an app.
+tier: moderate
+related_slugs:
+  - write-github-actions-workflow
+  - debug-ci-pipeline-failure
+  - review-kubernetes-deployment-risk
+seo:
+  h1: Which AI model should you use to write a Dockerfile?
+  meta_description: Dockerfile work is moderate. Use Claude Sonnet 4. Claude Opus 4 costs far more for this scope.
+  title_tag: Best AI model for Dockerfiles — rightmodel

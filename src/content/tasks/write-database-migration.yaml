@@ -1,0 +1,12 @@
+slug: write-database-migration
+title: Write a Database Migration Safely
+description: Draft a schema migration with clear forward steps, rollback thinking, and expected data changes.
+tier: moderate
+related_slugs:
+  - implement-pagination-api
+  - plan-data-migration-strategy
+  - design-database-schema-saas
+seo:
+  h1: Which AI model should you use to write a database migration?
+  meta_description: Database migrations are moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
+  title_tag: Best AI model for DB migrations — rightmodel

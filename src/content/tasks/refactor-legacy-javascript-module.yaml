@@ -1,0 +1,12 @@
+slug: refactor-legacy-javascript-module
+title: Refactor a Legacy JavaScript Module
+description: Clean up a legacy module while preserving exports, behaviour, and known integration points.
+tier: moderate
+related_slugs:
+  - migrate-javascript-to-typescript
+  - rename-variables-consistently
+  - document-codebase-functions
+seo:
+  h1: Which AI model should you use to refactor a legacy JavaScript module?
+  meta_description: Legacy module refactors are moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
+  title_tag: Best AI model for legacy JS refactors — rightmodel

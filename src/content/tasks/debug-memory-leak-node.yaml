@@ -1,0 +1,12 @@
+slug: debug-memory-leak-node
+title: Debug a Memory Leak in Node
+description: Trace memory growth in a Node service across code paths, object lifetimes, and repeated requests.
+tier: deep
+related_slugs:
+  - debug-async-race-condition
+  - debug-intermittent-production-error
+  - diagnose-distributed-tracing-gap
+seo:
+  h1: Which AI model should you use to debug a memory leak in Node?
+  meta_description: Memory leak debugging needs deeper reasoning. Use Claude Opus 4. Claude Sonnet 4 is cheaper, but this is worth paying up.
+  title_tag: Best AI model for Node memory leaks — rightmodel

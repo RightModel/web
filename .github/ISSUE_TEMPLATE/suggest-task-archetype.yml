@@ -1,0 +1,35 @@
+name: Suggest a task archetype
+description: Suggest a new /for/[slug] page for a developer task with clear search intent
+title: "[Task] "
+labels:
+  - tasks
+body:
+  - type: input
+    id: slug
+    attributes:
+      label: Proposed slug
+      description: Lowercase, hyphenated, task-focused.
+    validations:
+      required: true
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Tier
+      options:
+        - routine
+        - moderate
+        - deep
+    validations:
+      required: true
+  - type: textarea
+    id: search_intent
+    attributes:
+      label: Search intent
+      description: What real developer query would this page target?
+    validations:
+      required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Why this task belongs in the launch set
+      description: Include adjacent tasks or related slugs if you know them.

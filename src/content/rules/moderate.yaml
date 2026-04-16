@@ -1,0 +1,33 @@
+tier: moderate
+label: Moderate
+description: Refactoring, feature implementation, debugging known errors, documentation writing.
+signals:
+  match_verbs:
+    - refactor
+    - implement
+    - write
+    - update
+    - debug
+    - document
+    - review
+  match_patterns:
+    - react component
+    - express api
+    - feature
+    - endpoint
+    - middleware
+    - hooks
+    - docs
+    - documentation
+    - known error
+  exclude_patterns:
+    - unit test
+    - race condition
+    - security
+    - vulnerability
+    - database schema
+    - system design
+notes:
+  - Some reasoning and synthesis are required.
+  - Quality improves with stronger coding ability, but frontier depth is not necessary.
+  - This is the default tier for ambiguous medium-scope work.

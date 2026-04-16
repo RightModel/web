@@ -1,0 +1,29 @@
+name: Report a wrong recommendation
+description: Report a task description that produced the wrong model recommendation
+title: "[Recommendation] "
+labels:
+  - recommendation
+body:
+  - type: textarea
+    id: task
+    attributes:
+      label: Task description
+      description: Paste the exact task text you used.
+    validations:
+      required: true
+  - type: input
+    id: actual
+    attributes:
+      label: Recommendation shown
+    validations:
+      required: true
+  - type: input
+    id: expected
+    attributes:
+      label: Recommendation expected
+    validations:
+      required: true
+  - type: textarea
+    id: reasoning
+    attributes:
+      label: Why the current recommendation looks wrong

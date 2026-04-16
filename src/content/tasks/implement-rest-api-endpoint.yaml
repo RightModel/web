@@ -1,0 +1,12 @@
+slug: implement-rest-api-endpoint
+title: Implement a REST API Endpoint
+description: Build a REST endpoint with request validation, handler logic, and a predictable response shape.
+tier: moderate
+related_slugs:
+  - build-webhook-handler
+  - implement-pagination-api
+  - write-unit-tests-express-api
+seo:
+  h1: Which AI model should you use to implement a REST API endpoint?
+  meta_description: REST endpoint work is moderate. Use Claude Sonnet 4. Claude Opus 4 costs far more for this scope.
+  title_tag: Best AI model for REST endpoints — rightmodel

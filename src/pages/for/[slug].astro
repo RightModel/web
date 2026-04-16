@@ -1,0 +1,263 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { buildRecommendationForTask, estimateCostPer1kCalls } from "@/lib/classifier";
+import { getExplanationCache, getPricingCache } from "@/lib/data";
+import { formatDate, formatMultiplier, formatUsd, formatUsdPerCall, sentenceCase } from "@/lib/format";
+
+export async function getStaticPaths() {
+  const tasks = await getCollection("tasks");
+
+  return tasks.map((entry) => ({
+    params: { slug: entry.data.slug },
+    props: { task: entry.data }
+  }));
+}
+
+const { task } = Astro.props;
+const tasks = (await getCollection("tasks")).map((entry) => entry.data);
+const rules = (await getCollection("rules")).map((entry) => entry.data);
+const pricing = getPricingCache();
+const explanations = getExplanationCache();
+const recommendation = buildRecommendationForTask({
+  task,
+  rules,
+  pricing,
+  explanations
+});
+const relatedTasks = task.related_slugs
+  .map((slug) => tasks.find((entry) => entry.slug === slug))
+  .filter((entry): entry is (typeof tasks)[number] => Boolean(entry))
+  .map((entry) => ({
+    ...entry,
+    recommendation: buildRecommendationForTask({
+      task: entry,
+      rules,
+      pricing,
+      explanations
+    })
+  }));
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: task.seo.h1,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          recommendation.costComparisonDirection === "cheaper" && recommendation.defaultReachModel
+            ? `Use ${recommendation.model.label} (${recommendation.modelSlug}). ${recommendation.defaultReachModel.label} is overkill here and costs ${formatMultiplier(recommendation.costMultiplier || 1)} more per run.`
+            : `Use ${recommendation.model.label} (${recommendation.modelSlug}). It costs more than ${recommendation.defaultReachModel?.label || "the next tier down"}, and this is one of the few cases where the extra spend is justified.`
+      }
+    }
+  ]
+};
+const tierAnchor = `/models#${task.tier}`;
+const taskInput = task.description;
+---
+
+<BaseLayout
+  title={task.seo.title_tag}
+  titleAbsolute={true}
+  description={task.seo.meta_description}
+  path={`/for/${task.slug}`}
+  ogImagePath={`/og/tasks/${task.slug}.png`}
+  jsonLd={faqJsonLd}
+  pageClass="pt-10"
+>
+  <nav aria-label="Breadcrumb" class="mb-6 text-sm text-[color:var(--color-fg-muted)]">
+    <a href="/">rightmodel</a>
+    <span> → </span>
+    <a href={tierAnchor}>{sentenceCase(task.tier)}</a>
+  </nav>
+
+  <section class="space-y-4">
+    <h1 class="max-w-[22ch] text-[2rem] font-semibold leading-[1.15] text-[color:var(--color-fg-default)]">
+      {task.seo.h1}
+    </h1>
+
+    <article data-output-card data-tier={recommendation.tier} class="rm-panel border-l-4 p-5">
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="space-y-2">
+          <h2 class="text-[2.5rem] font-semibold leading-[1.1] text-[color:var(--color-fg-default)]">
+            Use {recommendation.model.label}.
+          </h2>
+          <div class="flex flex-wrap items-center gap-3 text-sm text-[color:var(--color-fg-muted)]">
+            <span class="rounded-full bg-[color:var(--color-bg-subtle)] px-2 py-1">
+              {sentenceCase(recommendation.modelProvider)}
+            </span>
+            <code class="rm-code text-sm">{recommendation.modelSlug}</code>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-3 py-2 text-sm font-medium text-[color:var(--color-fg-default)]"
+          data-task-copy-link
+        >
+          Copy link
+        </button>
+      </div>
+
+      <p class="mt-4 text-base text-[color:var(--color-fg-muted)]">
+        {recommendation.defaultReachModel && recommendation.costComparisonDirection === "cheaper"
+          ? `${recommendation.defaultReachModel.label} is overkill here.`
+          : recommendation.explanation.overkill_note}
+      </p>
+      <p class="rm-code mt-2 text-sm text-[color:var(--color-success)]">
+        {recommendation.costMultiplier
+          ? `${formatMultiplier(recommendation.costMultiplier)} ${
+              recommendation.costComparisonDirection === "cheaper" ? "cheaper per run." : "more per run."
+            }`
+          : "Pricing snapshot loaded."}
+      </p>
+    </article>
+  </section>
+
+  <section class="mt-6 space-y-4">
+    <div class="rm-panel p-4 sm:p-5">
+      <label class="rm-visually-hidden" for="task-page-input">Task description</label>
+      <textarea
+        id="task-page-input"
+        rows="2"
+        maxlength="500"
+        data-task-page-input
+        data-initial-value={taskInput}
+        class="min-h-[5.5rem] w-full resize-none rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-bg)] px-4 py-3 text-lg text-[color:var(--color-fg-default)]"
+      >{taskInput}</textarea>
+    </div>
+
+    <details class="rm-panel p-5">
+      <summary class="cursor-pointer text-sm font-medium text-[color:var(--color-accent)]">Why →</summary>
+      <div class="mt-4 space-y-5">
+        <p class="text-sm leading-6 text-[color:var(--color-fg-default)]">{recommendation.explanation.explanation}</p>
+
+        <section>
+          <h3 class="text-sm font-semibold text-[color:var(--color-fg-default)]">Cost breakdown</h3>
+          <div class="mt-3 overflow-x-auto">
+            <table class="rm-table">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Provider</th>
+                  <th>Tier</th>
+                  <th>Input cost</th>
+                  <th>Output cost</th>
+                  <th>Est. / 1k calls</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="font-semibold">{recommendation.model.label}</div>
+                    <code class="rm-code text-sm text-[color:var(--color-fg-muted)]">{recommendation.modelSlug}</code>
+                  </td>
+                  <td>{sentenceCase(recommendation.modelProvider)}</td>
+                  <td>{sentenceCase(recommendation.tier)}</td>
+                  <td class="rm-code">{formatUsd(recommendation.model.input_cost_per_1k_tokens_usd)}</td>
+                  <td class="rm-code">{formatUsd(recommendation.model.output_cost_per_1k_tokens_usd)}</td>
+                  <td class="rm-code">{formatUsdPerCall(estimateCostPer1kCalls(recommendation.model, recommendation.tier))}</td>
+                </tr>
+                {recommendation.defaultReachModel && recommendation.defaultReachSlug && recommendation.defaultReachProvider && (
+                  <tr>
+                    <td>
+                      <div class="font-semibold">{recommendation.defaultReachModel.label}</div>
+                      <code class="rm-code text-sm text-[color:var(--color-fg-muted)]">{recommendation.defaultReachSlug}</code>
+                    </td>
+                    <td>{sentenceCase(recommendation.defaultReachProvider)}</td>
+                    <td>{sentenceCase(recommendation.defaultReachModel.tier)}</td>
+                    <td class="rm-code">{formatUsd(recommendation.defaultReachModel.input_cost_per_1k_tokens_usd)}</td>
+                    <td class="rm-code">{formatUsd(recommendation.defaultReachModel.output_cost_per_1k_tokens_usd)}</td>
+                    <td class="rm-code">{formatUsdPerCall(estimateCostPer1kCalls(recommendation.defaultReachModel, recommendation.defaultReachModel.tier))}</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section>
+          <h3 class="text-sm font-semibold text-[color:var(--color-fg-default)]">Matched signals</h3>
+          <ul class="mt-2 list-disc pl-5 text-sm text-[color:var(--color-fg-muted)]">
+            {recommendation.matchedSignals.length > 0 ? (
+              recommendation.matchedSignals.map((signal) => <li>{signal}</li>)
+            ) : (
+              <li>{task.tier} task archetype, reviewed against the ruleset.</li>
+            )}
+          </ul>
+        </section>
+      </div>
+    </details>
+
+    <p class="text-sm text-[color:var(--color-fg-muted)]">
+      This recommendation is based on the task description alone. If you are attaching a large codebase, mention it in the input above.
+    </p>
+
+    <p class="text-sm text-[color:var(--color-fg-muted)]">
+      Model pricing: provider pricing pages, retrieved {formatDate(pricing.retrieved_at)}. Classification: rightmodel ruleset v1.
+    </p>
+  </section>
+
+  <section class="mt-10 space-y-4">
+    <h2 class="text-xl font-semibold text-[color:var(--color-fg-default)]">Related tasks</h2>
+    <div class="grid gap-4 md:grid-cols-2">
+      {relatedTasks.map((entry) => (
+        <a href={`/for/${entry.slug}`} class="rm-panel block p-5 text-[color:var(--color-fg-default)] no-underline">
+          <div class="flex items-start justify-between gap-3">
+            <h3 class="text-base font-semibold leading-6">{entry.title}</h3>
+            <span class="rounded-full bg-[color:var(--color-bg-subtle)] px-2 py-1 text-xs text-[color:var(--color-fg-muted)]">
+              {sentenceCase(entry.tier)}
+            </span>
+          </div>
+          <p class="mt-2 text-sm text-[color:var(--color-fg-muted)]">{entry.description}</p>
+          <p class="mt-3 text-sm font-medium text-[color:var(--color-accent)]">
+            Use {entry.recommendation.model.label}.
+          </p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <script
+    is:inline
+  >{`
+    const textarea = document.querySelector('[data-task-page-input]');
+    const copyButton = document.querySelector('[data-task-copy-link]');
+    let timer;
+
+    if (textarea instanceof HTMLTextAreaElement) {
+      const initialValue = textarea.dataset.initialValue || textarea.value;
+
+      textarea.addEventListener('input', () => {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => {
+          const nextValue = textarea.value.trim();
+          if (!nextValue || nextValue === initialValue.trim()) {
+            return;
+          }
+
+          const params = new URLSearchParams({ q: nextValue });
+          window.location.href = '/?' + params.toString();
+        }, 300);
+      });
+    }
+
+    if (copyButton instanceof HTMLButtonElement) {
+      copyButton.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          copyButton.textContent = 'Link copied.';
+          window.setTimeout(() => {
+            copyButton.textContent = 'Copy link';
+          }, 1800);
+        } catch {
+          copyButton.textContent = 'Copy unavailable.';
+          window.setTimeout(() => {
+            copyButton.textContent = 'Copy link';
+          }, 1800);
+        }
+      });
+    }
+  `}</script>
+</BaseLayout>

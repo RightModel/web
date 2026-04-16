@@ -1,0 +1,12 @@
+slug: write-sql-query-from-requirements
+title: Write SQL Query from Requirements
+description: Draft a straightforward SQL query from clear filters, joins, and output columns.
+tier: routine
+related_slugs:
+  - write-regex-pattern
+  - generate-openapi-schema-example
+  - design-database-schema-saas
+seo:
+  h1: Which AI model should you use to write a SQL query from requirements?
+  meta_description: Writing a SQL query is routine work. Use Gemini Flash 2.0. Claude Sonnet 4 is ~9× pricier here.
+  title_tag: Best AI model for SQL queries — rightmodel

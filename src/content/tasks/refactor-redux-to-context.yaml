@@ -1,0 +1,12 @@
+slug: refactor-redux-to-context
+title: Refactor Redux State to Context
+description: Replace a small Redux slice with React Context while preserving data flow and component behaviour.
+tier: moderate
+related_slugs:
+  - refactor-react-component-hooks
+  - extract-reusable-component
+  - migrate-javascript-to-typescript
+seo:
+  h1: Which AI model should you use to refactor Redux state to Context?
+  meta_description: Redux to Context refactors are moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
+  title_tag: Best AI model for Redux refactors — rightmodel

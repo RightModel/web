@@ -1,0 +1,12 @@
+slug: debug-async-race-condition
+title: Debug an Async Race Condition
+description: Diagnose a race condition across async code paths where timing and state ordering matter.
+tier: deep
+related_slugs:
+  - debug-intermittent-production-error
+  - debug-memory-leak-node
+  - diagnose-distributed-tracing-gap
+seo:
+  h1: Which AI model should you use to debug an async race condition?
+  meta_description: Async race conditions need deeper reasoning. Use Claude Opus 4. Claude Sonnet 4 is cheaper, but this is worth paying up.
+  title_tag: Best AI model for race conditions — rightmodel

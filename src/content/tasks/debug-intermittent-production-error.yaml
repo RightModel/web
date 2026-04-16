@@ -1,0 +1,12 @@
+slug: debug-intermittent-production-error
+title: Debug an Intermittent Production Error
+description: Trace a hard to reproduce production issue across logs, deploys, and cross service behaviour.
+tier: deep
+related_slugs:
+  - debug-async-race-condition
+  - debug-memory-leak-node
+  - debug-api-timeout
+seo:
+  h1: Which AI model should you use to debug an intermittent production error?
+  meta_description: Intermittent prod errors need deeper reasoning. Use Claude Opus 4. Claude Sonnet 4 is cheaper, but this is worth paying up.
+  title_tag: Best AI model for prod debugging — rightmodel

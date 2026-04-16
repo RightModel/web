@@ -1,0 +1,25 @@
+---
+import { navLinks, siteTitle } from "@/lib/site";
+---
+
+<header class="border-b border-[color:var(--color-border-muted)] bg-[color:var(--color-bg)]">
+  <div class="mx-auto flex w-full max-w-[896px] items-center justify-between gap-4 px-4 py-4">
+    <a class="flex items-center gap-3 text-[color:var(--color-fg-default)] no-underline" href="/">
+      <span
+        aria-hidden="true"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[color:var(--color-accent)] bg-[color:var(--color-accent-subtle)] text-sm font-semibold text-[color:var(--color-accent)]"
+      >
+        rm
+      </span>
+      <span class="text-lg font-semibold">{siteTitle}</span>
+    </a>
+
+    <nav aria-label="Primary" class="flex items-center gap-4 text-sm text-[color:var(--color-fg-muted)]">
+      {navLinks.map((link) => (
+        <a class="hover:text-[color:var(--color-accent)]" href={link.href}>
+          {link.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>

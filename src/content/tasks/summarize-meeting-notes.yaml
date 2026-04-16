@@ -1,0 +1,12 @@
+slug: summarize-meeting-notes
+title: Summarize Meeting Notes for Developers
+description: Turn rough meeting notes into action items, decisions, and open questions for the team.
+tier: routine
+related_slugs:
+  - summarize-pull-request
+  - explain-code-to-non-technical
+  - write-api-documentation
+seo:
+  h1: Which AI model should you use to summarize meeting notes?
+  meta_description: Meeting note summaries are routine work. Use Gemini Flash 2.0. Claude Sonnet 4 is ~9× pricier here.
+  title_tag: Best AI model for meeting summaries — rightmodel

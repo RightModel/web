@@ -1,0 +1,100 @@
+---
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import { getPricingCache } from "@/lib/data";
+import { defaultSiteUrl, pageDescriptions, siteDescription, siteTitle } from "@/lib/site";
+import "@/styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  path?: string;
+  pageClass?: string;
+  pageWidth?: "default" | "wide";
+  titleAbsolute?: boolean;
+  ogImagePath?: string;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  title,
+  description,
+  path = Astro.url.pathname,
+  pageClass = "",
+  pageWidth = "default",
+  titleAbsolute = false,
+  ogImagePath = "/og.png",
+  jsonLd
+} = Astro.props;
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || defaultSiteUrl;
+const canonical = new URL(path, siteUrl).toString();
+const pricing = getPricingCache();
+const pageTitle = title ? (titleAbsolute ? title : `${title} | ${siteTitle}`) : `${siteTitle} | Use the right model.`;
+const pageDescription = description || pageDescriptions[path] || siteDescription;
+const verificationToken = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
+const gaMeasurementId = import.meta.env.PUBLIC_GA4_MEASUREMENT_ID;
+const defaultJsonLd =
+  path === "/"
+    ? {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        applicationCategory: "DeveloperApplication",
+        name: siteTitle,
+        operatingSystem: "Web",
+        url: canonical,
+        description: siteDescription,
+        offers: {
+          "@type": "Offer",
+          price: "0",
+          priceCurrency: "USD"
+        }
+      }
+    : null;
+const jsonLdEntries = [...(defaultJsonLd ? [defaultJsonLd] : []), ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [])];
+---
+
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(ogImagePath, siteUrl).toString()} />
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content={pageTitle} />
+    <meta property="twitter:description" content={pageDescription} />
+    <meta property="twitter:image" content={new URL(ogImagePath, siteUrl).toString()} />
+    {verificationToken && <meta name="google-site-verification" content={verificationToken} />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {jsonLdEntries.map((entry) => (
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(entry)} />
+    ))}
+    {gaMeasurementId && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}></script>
+        <script
+          is:inline
+          define:vars={{ gaMeasurementId }}
+        >{`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){ dataLayer.push(arguments); }
+          gtag('js', new Date());
+          gtag('config', gaMeasurementId);
+        `}</script>
+      </>
+    )}
+  </head>
+  <body>
+    <Header />
+    <main class:list={["rm-page", pageWidth === "wide" && "rm-page--wide", pageClass]}>
+      <slot />
+    </main>
+    <Footer pricingDate={pricing.retrieved_at} />
+  </body>
+</html>

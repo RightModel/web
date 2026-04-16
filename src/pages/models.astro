@@ -1,0 +1,86 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getPricingCache } from "@/lib/data";
+import { formatDate, formatUsd, sentenceCase } from "@/lib/format";
+import { representativeTaskSlugsByTier } from "@/lib/tasks";
+
+const pricing = getPricingCache();
+const tasks = (await getCollection("tasks")).map((entry) => entry.data);
+const rows = Object.entries(pricing.models)
+  .flatMap(([provider, models]) =>
+    Object.entries(models).map(([slug, model]) => ({
+      provider,
+      slug,
+      ...model
+    }))
+  )
+  .sort((left, right) => {
+    if (left.provider !== right.provider) {
+      return left.provider.localeCompare(right.provider);
+    }
+
+    const order = { routine: 0, moderate: 1, deep: 2 };
+    return order[left.tier] - order[right.tier];
+  });
+const representativeTasks = Object.entries(representativeTaskSlugsByTier).map(([tier, slugs]) => ({
+  tier,
+  tasks: slugs
+    .map((slug) => tasks.find((entry) => entry.slug === slug))
+    .filter((task): task is (typeof tasks)[number] => Boolean(task))
+}));
+---
+
+<BaseLayout title="Covered models" path="/models" pageWidth="wide" pageClass="pt-10">
+  <section class="space-y-3">
+    <h1 class="text-[2rem] font-semibold leading-tight text-[color:var(--color-fg-default)]">Covered models</h1>
+    <p class="text-base text-[color:var(--color-fg-muted)]">
+      Pricing refreshed nightly from provider sources. Last updated: {formatDate(pricing.retrieved_at)}.
+    </p>
+  </section>
+
+  <div class="rm-panel mt-6 overflow-x-auto">
+    <table class="rm-table">
+      <thead>
+        <tr>
+          <th>Provider</th>
+          <th>Model</th>
+          <th>Tier</th>
+          <th>Input cost</th>
+          <th>Output cost</th>
+          <th>Context window</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row) => (
+          <tr>
+            <td>{sentenceCase(row.provider)}</td>
+            <td>
+              <div class="font-semibold">{row.label}</div>
+              <code class="rm-code text-sm text-[color:var(--color-fg-muted)]">{row.slug}</code>
+            </td>
+            <td>{sentenceCase(row.tier)}</td>
+            <td class="rm-code">{formatUsd(row.input_cost_per_1k_tokens_usd)}</td>
+            <td class="rm-code">{formatUsd(row.output_cost_per_1k_tokens_usd)}</td>
+            <td class="rm-code">{row.context_window_k}k</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <section class="mt-10 grid gap-4 md:grid-cols-3">
+    {representativeTasks.map((group) => (
+      <article id={group.tier} class="rm-panel p-5">
+        <h2 class="text-base font-semibold text-[color:var(--color-fg-default)]">{sentenceCase(group.tier)}</h2>
+        <div class="mt-3 space-y-2 text-sm text-[color:var(--color-fg-muted)]">
+          {group.tasks.map((task) => (
+            <p>
+              <a href={`/for/${task.slug}`}>{task.title}</a>
+            </p>
+          ))}
+        </div>
+      </article>
+    ))}
+  </section>
+</BaseLayout>

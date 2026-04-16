@@ -1,0 +1,59 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getPricingCache } from "@/lib/data";
+import { formatDate } from "@/lib/format";
+
+const rules = (await getCollection("rules")).map((entry) => entry.data);
+const pricing = getPricingCache();
+---
+
+<BaseLayout title="Methodology" path="/methodology" pageWidth="wide" pageClass="pt-10">
+  <article class="rm-prose max-w-[56rem]">
+    <h1>Methodology</h1>
+    <p>
+      The classifier matches task descriptions against an open ruleset. It looks for force patterns,
+      signal verbs, signal phrases, and exclusion phrases, then chooses between routine, moderate, and
+      deep reasoning tiers.
+    </p>
+    <p>
+      The classifier is not perfect. It handles most clear cases without an AI call. If the confidence
+      score stays below 0.6, the home page offers deep mode for an explicit second pass.
+    </p>
+
+    <h2>Tier definitions</h2>
+    <div class="space-y-4">
+      {rules.map((rule) => (
+        <section class="rm-panel p-5">
+          <h3>{rule.label}</h3>
+          <p class="rm-muted">{rule.description}</p>
+          <ul>
+            {rule.notes.map((note) => (
+              <li>{note}</li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+
+    <h2>What the tool does not see</h2>
+    <ul>
+      <li>Large codebases unless that context is included in the task description</li>
+      <li>Attached files, full prompt templates, or system instructions</li>
+      <li>Provider-specific limits outside the covered model list</li>
+    </ul>
+
+    <h2>Pricing data</h2>
+    <p>
+      Pricing is refreshed nightly from public provider pricing pages and bundled into the static build.
+      The current snapshot was retrieved on {formatDate(pricing.retrieved_at)}. Costs are shown in USD
+      and estimated from average prompt and completion sizes.
+    </p>
+
+    <h2>Wrong recommendation?</h2>
+    <p>
+      Open an issue with the task description, the recommendation you saw, and the model you think
+      should have been selected. Signal patterns are reviewed manually before merging.
+    </p>
+  </article>
+</BaseLayout>

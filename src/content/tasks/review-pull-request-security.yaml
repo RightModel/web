@@ -1,0 +1,12 @@
+slug: review-pull-request-security
+title: Review a Pull Request for Security
+description: Review a code change for auth gaps, injection risks, data exposure, and unsafe assumptions.
+tier: deep
+related_slugs:
+  - review-sql-injection-risk
+  - audit-authentication-flow
+  - summarize-pull-request
+seo:
+  h1: Which AI model should you use to review a pull request for security?
+  meta_description: Security review needs deeper reasoning. Use Claude Opus 4. Claude Sonnet 4 is cheaper, but this is worth paying up.
+  title_tag: Best AI model for security PR review — rightmodel

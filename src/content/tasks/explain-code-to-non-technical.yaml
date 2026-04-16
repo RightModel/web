@@ -1,0 +1,12 @@
+slug: explain-code-to-non-technical
+title: Explain Code to Non Technical Users
+description: Rewrite technical code behaviour in plain language for teammates, clients, or stakeholders.
+tier: routine
+related_slugs:
+  - summarize-pull-request
+  - summarize-meeting-notes
+  - document-codebase-functions
+seo:
+  h1: Which AI model should you use to explain code to non technical users?
+  meta_description: Explaining code in plain language is routine work. Use Gemini Flash 2.0. Claude Sonnet 4 is ~9× pricier here.
+  title_tag: Best AI model for explaining code — rightmodel

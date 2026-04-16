@@ -1,0 +1,12 @@
+slug: debug-api-timeout
+title: Debug an API Timeout Issue
+description: Diagnose a timeout in a known request path with logs, timings, and a contained service boundary.
+tier: moderate
+related_slugs:
+  - translate-error-message-plain-english
+  - summarize-log-output
+  - debug-intermittent-production-error
+seo:
+  h1: Which AI model should you use to debug an API timeout?
+  meta_description: API timeout debugging is moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
+  title_tag: Best AI model for API timeouts — rightmodel

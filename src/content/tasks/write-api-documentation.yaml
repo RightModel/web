@@ -1,0 +1,12 @@
+slug: write-api-documentation
+title: Write API Documentation for Developers
+description: Draft accurate endpoint documentation from known request shapes, examples, and response behaviour.
+tier: moderate
+related_slugs:
+  - document-codebase-functions
+  - generate-openapi-schema-example
+  - write-cli-usage-examples
+seo:
+  h1: Which AI model should you use to write API documentation?
+  meta_description: API docs are moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more for little gain here.
+  title_tag: Best AI model for API docs — rightmodel

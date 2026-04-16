@@ -1,0 +1,19 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { changelogEntries } from "@/lib/site";
+import { formatDate } from "@/lib/format";
+---
+
+<BaseLayout title="Changelog" path="/changelog" pageWidth="wide" pageClass="pt-10">
+  <article class="rm-prose max-w-[48rem]">
+    <h1>Changelog</h1>
+    {changelogEntries.map((entry) => (
+      <section>
+        <h2>{formatDate(entry.date)}</h2>
+        <p>
+          {entry.type} - {entry.entry}
+        </p>
+      </section>
+    ))}
+  </article>
+</BaseLayout>

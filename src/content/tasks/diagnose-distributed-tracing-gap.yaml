@@ -1,0 +1,12 @@
+slug: diagnose-distributed-tracing-gap
+title: Diagnose a Distributed Tracing Gap
+description: Reason across services to find where tracing context is dropped or no longer correlated.
+tier: deep
+related_slugs:
+  - debug-async-race-condition
+  - debug-memory-leak-node
+  - design-event-driven-architecture
+seo:
+  h1: Which AI model should you use to diagnose a distributed tracing gap?
+  meta_description: Tracing gaps need deeper reasoning. Use Claude Opus 4. Claude Sonnet 4 is cheaper, but this is worth paying up.
+  title_tag: Best AI model for tracing gaps — rightmodel

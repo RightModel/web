@@ -1,0 +1,36 @@
+tier: routine
+label: Routine
+description: Formatting, translation, summarisation, boilerplate generation, simple Q&A.
+signals:
+  match_verbs:
+    - format
+    - translate
+    - summarize
+    - summarise
+    - rename
+    - fix typo
+    - add comment
+    - add docstring
+    - convert
+    - list
+  match_patterns:
+    - unit test
+    - write unit tests
+    - boilerplate
+    - explain how
+    - what is
+    - summarize
+    - summarise
+    - meeting notes
+  exclude_patterns:
+    - architecture
+    - security
+    - vulnerability
+    - refactor
+    - multi-step
+    - multi tenant
+  max_tokens: 4000
+notes:
+  - Single-domain knowledge required.
+  - Output is well-defined and bounded.
+  - No multi-hop reasoning required.

@@ -1,0 +1,12 @@
+slug: design-database-schema-saas
+title: Design a SaaS Database Schema
+description: Design a multi table SaaS schema with tenant boundaries, growth, and future query patterns in mind.
+tier: deep
+related_slugs:
+  - design-multi-tenant-permissions
+  - plan-data-migration-strategy
+  - design-microservices-api
+seo:
+  h1: Which AI model should you use to design a SaaS database schema?
+  meta_description: SaaS schema design needs deeper reasoning. Use Claude Opus 4. Claude Sonnet 4 is cheaper, but this is worth paying up.
+  title_tag: Best AI model for SaaS schemas — rightmodel

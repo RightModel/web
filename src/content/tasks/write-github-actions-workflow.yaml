@@ -1,0 +1,12 @@
+slug: write-github-actions-workflow
+title: Write a GitHub Actions Workflow
+description: Draft a CI workflow with clear steps, cache use, and predictable build or test execution.
+tier: moderate
+related_slugs:
+  - debug-ci-pipeline-failure
+  - write-dockerfile
+  - build-webhook-handler
+seo:
+  h1: Which AI model should you use to write a GitHub Actions workflow?
+  meta_description: GitHub Actions workflows are moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
+  title_tag: Best AI model for GitHub Actions — rightmodel

@@ -1,0 +1,12 @@
+slug: document-codebase-functions
+title: Document Functions Across a Codebase
+description: Write clear function summaries and usage notes across a contained module or service.
+tier: moderate
+related_slugs:
+  - write-api-documentation
+  - explain-code-to-non-technical
+  - refactor-legacy-javascript-module
+seo:
+  h1: Which AI model should you use to document codebase functions?
+  meta_description: Codebase function docs are moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
+  title_tag: Best AI model for function docs — rightmodel

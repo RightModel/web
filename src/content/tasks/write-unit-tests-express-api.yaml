@@ -1,0 +1,12 @@
+slug: write-unit-tests-express-api
+title: Write Unit Tests for Express API
+description: Create focused tests for an Express endpoint with predictable request and response cases.
+tier: routine
+related_slugs:
+  - fix-failing-unit-test
+  - implement-rest-api-endpoint
+  - generate-openapi-schema-example
+seo:
+  h1: Which AI model should you use to write unit tests for an Express API?
+  meta_description: Writing Express API tests is routine work. Use Gemini Flash 2.0. Claude Sonnet 4 is ~9× pricier here.
+  title_tag: Best AI model for Express API tests — rightmodel

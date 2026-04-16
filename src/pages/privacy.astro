@@ -1,0 +1,49 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { formatDate } from "@/lib/format";
+
+const lastUpdated = formatDate("2026-04-16T00:00:00Z");
+---
+
+<BaseLayout title="Privacy policy" path="/privacy" pageWidth="wide" pageClass="pt-10">
+  <article class="rm-prose max-w-[56rem]">
+    <h1>Privacy policy</h1>
+    <p>Last updated: {lastUpdated}</p>
+    <p>rightmodel.dev is a static website with minimal data collection.</p>
+    <p>
+      <strong>What is collected.</strong> The site can use Google Analytics 4 to understand aggregate
+      usage, Google Search Console for search performance, and Firebase Hosting logs for operational
+      request data.
+    </p>
+    <p>
+      <strong>What is not collected.</strong> rightmodel does not require accounts, does not collect
+      names or email addresses, does not sell data, and does not use ad-targeting cookies.
+    </p>
+    <p>
+      <strong>Your task descriptions.</strong> Text typed into the input box is processed in the
+      browser by the heuristic classifier. It is not sent to a server on the heuristic path. If you
+      use deep mode, the input is sent to a configured Vertex AI Gemini endpoint after explicit
+      disclosure.
+    </p>
+    <p>
+      <strong>Cookies.</strong> Google Analytics 4 may set cookies to measure usage. The site still
+      works without analytics cookies enabled.
+    </p>
+    <p>
+      <strong>Third parties.</strong> Google Analytics, Search Console, and Firebase Hosting are
+      governed by Google's terms and privacy policies.
+    </p>
+    <p>
+      <strong>Children.</strong> The site is not directed at children under 13 and does not knowingly
+      collect information from them.
+    </p>
+    <p>
+      <strong>Changes.</strong> This policy may be updated. The last updated date above reflects the
+      current version.
+    </p>
+    <p>
+      <strong>Contact.</strong> Questions: <a href="https://github.com/rightmodel/web/issues">open an issue</a>
+      or reach me via <a href="/about">About</a>.
+    </p>
+  </article>
+</BaseLayout>

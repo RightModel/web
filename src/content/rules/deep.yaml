@@ -1,0 +1,32 @@
+tier: deep
+label: Deep reasoning
+description: Architecture decisions, security review, complex debugging, large codebase analysis.
+signals:
+  match_verbs:
+    - design
+    - architect
+    - review security
+    - audit
+    - debug
+    - diagnose
+    - reason about
+  match_patterns:
+    - architecture
+    - vulnerability
+    - race condition
+    - multi-tenant
+    - multi tenant
+    - distributed
+    - trade-off
+    - tradeoff
+    - memory leak
+    - large codebase
+  force_patterns:
+    - security vulnerabilit
+    - system design
+    - database schema
+  min_tokens: 0
+notes:
+  - Multi-hop reasoning is likely required.
+  - Output quality is meaningfully higher at larger model tiers.
+  - Cost difference is justified.

@@ -1,0 +1,12 @@
+slug: write-regex-pattern
+title: Write a Regex Pattern
+description: Draft a regex for a well-defined validation or extraction task with clear input examples.
+tier: routine
+related_slugs:
+  - format-json-payload
+  - translate-error-message-plain-english
+  - write-sql-query-from-requirements
+seo:
+  h1: Which AI model should you use to write a regex pattern?
+  meta_description: Writing a regex is routine work. Use Gemini Flash 2.0. Claude Sonnet 4 is ~9× pricier here.
+  title_tag: Best AI model for regex writing — rightmodel

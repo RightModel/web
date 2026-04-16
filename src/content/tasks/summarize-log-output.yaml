@@ -1,0 +1,12 @@
+slug: summarize-log-output
+title: Summarize Log Output for Triage
+description: Condense noisy application logs into likely failure points and the next debugging question.
+tier: routine
+related_slugs:
+  - translate-error-message-plain-english
+  - debug-api-timeout
+  - debug-ci-pipeline-failure
+seo:
+  h1: Which AI model should you use to summarize log output?
+  meta_description: Log summaries are routine work. Use Gemini Flash 2.0. Claude Sonnet 4 is ~9× pricier here.
+  title_tag: Best AI model for log summaries — rightmodel

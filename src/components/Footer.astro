@@ -1,0 +1,32 @@
+---
+import { footerLinks } from "@/lib/site";
+import { formatDate } from "@/lib/format";
+
+interface Props {
+  pricingDate: string;
+}
+
+const { pricingDate } = Astro.props;
+---
+
+<footer class="border-t border-[color:var(--color-border-muted)] bg-[color:var(--color-bg)]">
+  <div class="mx-auto flex w-full max-w-[896px] flex-col gap-4 px-4 py-6 text-sm text-[color:var(--color-fg-muted)] md:flex-row md:items-start md:justify-between">
+    <p class="max-w-[24rem]">
+      Built by <a href="https://regnard.raquedan.com">Regnard Raquedan</a>. Free and open -
+      <a href="https://github.com/rightmodel/web">contribute on GitHub</a>.
+    </p>
+
+    <div class="flex flex-wrap gap-x-4 gap-y-2">
+      {footerLinks.primary.map((link) => (
+        <a href={link.href}>{link.label}</a>
+      ))}
+    </div>
+
+    <div class="flex flex-wrap gap-x-4 gap-y-2">
+      {footerLinks.legal.map((link) => (
+        <a href={link.href}>{link.label}</a>
+      ))}
+      <span>Pricing data last refreshed: {formatDate(pricingDate)}</span>
+    </div>
+  </div>
+</footer>

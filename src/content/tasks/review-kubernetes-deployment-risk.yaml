@@ -1,0 +1,12 @@
+slug: review-kubernetes-deployment-risk
+title: Review Kubernetes Deployment Risk
+description: Inspect a deployment plan for rollout hazards, config drift, and production failure modes.
+tier: deep
+related_slugs:
+  - write-dockerfile
+  - plan-data-migration-strategy
+  - audit-secrets-management
+seo:
+  h1: Which AI model should you use to review Kubernetes deployment risk?
+  meta_description: K8s deployment review needs deeper reasoning. Use Claude Opus 4. Claude Sonnet 4 is cheaper, but this is worth paying up.
+  title_tag: Best AI model for K8s review — rightmodel

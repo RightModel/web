@@ -1,0 +1,28 @@
+name: Suggest a new signal pattern
+description: Suggest a new phrase, verb, or exclusion rule for the classifier
+title: "[Signal] "
+labels:
+  - ruleset
+body:
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Tier
+      options:
+        - routine
+        - moderate
+        - deep
+    validations:
+      required: true
+  - type: textarea
+    id: pattern
+    attributes:
+      label: Signal pattern
+      description: Include the phrase or verb and one or two real task examples.
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Source or rationale
+      description: Explain why this signal belongs in that tier.

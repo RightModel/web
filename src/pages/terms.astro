@@ -1,0 +1,48 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { formatDate } from "@/lib/format";
+
+const lastUpdated = formatDate("2026-04-16T00:00:00Z");
+---
+
+<BaseLayout title="Terms of use" path="/terms" pageWidth="wide" pageClass="pt-10">
+  <article class="rm-prose max-w-[56rem]">
+    <h1>Terms of use</h1>
+    <p>Last updated: {lastUpdated}</p>
+    <p>rightmodel.dev is a free tool that recommends AI model tiers based on task descriptions.</p>
+    <p>
+      <strong>Informational only.</strong> Recommendations are generated from heuristic rules and
+      publicly available model pricing. Actual model performance and cost may vary based on your
+      prompt structure, usage patterns, and provider pricing changes not yet reflected in the current
+      snapshot.
+    </p>
+    <p>
+      <strong>No warranty.</strong> This tool is provided as is without warranty of any kind. No
+      guarantee is made about the accuracy or suitability of any recommendation.
+    </p>
+    <p>
+      <strong>Limitation of liability.</strong> To the fullest extent permitted by law, the operator
+      is not liable for damages arising from your use of this tool.
+    </p>
+    <p>
+      <strong>Acceptable use.</strong> You agree not to disrupt the service, scrape it in ways that
+      degrade service for others, or misrepresent rightmodel output as official vendor guidance.
+    </p>
+    <p>
+      <strong>Third-party content.</strong> rightmodel references model names and pricing belonging to
+      Anthropic, Google, and OpenAI. Those names and trademarks belong to their respective owners.
+    </p>
+    <p>
+      <strong>Source code.</strong> rightmodel is open source under the MIT licence. Repository:
+      <a href="https://github.com/rightmodel/web">github.com/rightmodel/web</a>.
+    </p>
+    <p>
+      <strong>Changes.</strong> These terms may be updated. The last updated date above reflects the
+      current version.
+    </p>
+    <p>
+      <strong>Contact.</strong> Questions: <a href="https://github.com/rightmodel/web/issues">open an issue</a>
+      or reach me via <a href="/about">About</a>.
+    </p>
+  </article>
+</BaseLayout>

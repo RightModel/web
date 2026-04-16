@@ -1,0 +1,12 @@
+slug: design-event-driven-architecture
+title: Design an Event Driven Architecture
+description: Plan event contracts, delivery semantics, retries, and failure handling across multiple services.
+tier: deep
+related_slugs:
+  - design-microservices-api
+  - design-caching-strategy
+  - diagnose-distributed-tracing-gap
+seo:
+  h1: Which AI model should you use to design an event driven architecture?
+  meta_description: Event driven design needs deeper reasoning. Use Claude Opus 4. Claude Sonnet 4 is cheaper, but this is worth paying up.
+  title_tag: Best AI model for event design — rightmodel

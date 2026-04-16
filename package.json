@@ -1,0 +1,39 @@
+{
+  "name": "rightmodel-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "npm run fetch:caches && npm run validate:content && npm run generate:og && astro build",
+    "preview": "astro preview",
+    "lint": "astro check && tsc --noEmit",
+    "test": "vitest run",
+    "test:classifier": "vitest run src/lib/classifier.test.ts",
+    "validate:rules": "node scripts/validate-rules.mjs",
+    "validate:tasks": "node scripts/validate-tasks.mjs",
+    "validate:content": "npm run validate:rules && npm run validate:tasks",
+    "fetch:caches": "node scripts/fetch-caches.mjs",
+    "generate:og": "node scripts/generate-og.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.2.1",
+    "@astrojs/tailwind": "^5.1.4",
+    "@google-cloud/storage": "^7.16.0",
+    "astro": "^5.7.10",
+    "yaml": "^2.8.0",
+    "zod": "^3.24.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.8",
+    "@resvg/resvg-js": "^2.6.2",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.2"
+  }
+}
