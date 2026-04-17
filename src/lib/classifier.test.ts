@@ -25,6 +25,25 @@ describe("classifier", async () => {
     expect(result.matchedSignals).toContain("database schema");
   });
 
+  it("keeps terse bounded conversions in the routine lane", () => {
+    const result = classifyTask("convert curl to fetch", rules);
+    expect(result.tier).toBe("routine");
+  });
+
+  it("keeps contained timeout debugging out of the routine lane", () => {
+    const result = classifyTask(
+      "diagnose a timeout in a known request path with logs and timings",
+      rules
+    );
+    expect(result.tier).toBe("moderate");
+  });
+
+  it("promotes migration-strategy planning into deep", () => {
+    const result = classifyTask("plan a data migration strategy", rules);
+    expect(result.tier).toBe("deep");
+    expect(result.matchedSignals).toContain("migration strategy");
+  });
+
   it("recommends a cheap routine model for a routine task", () => {
     const result = buildRecommendation({
       input: "write unit tests for an Express API endpoint",

@@ -47,6 +47,15 @@ const AVERAGE_CALL_TOKENS: Record<Tier, { input: number; output: number }> = {
   deep: { input: 1800, output: 900 }
 };
 
+const CLASSIFIER_THRESHOLDS = {
+  deep: 0.23,
+  routine: 0.23,
+  // Deep scoring has a universal 0.04 floor via `min_tokens: 0`.
+  // Keeping the cap just above that blocks routine from winning once any deep lexeme lands.
+  routineDeepCap: 0.05,
+  shortRoutine: 0.15
+} as const;
+
 interface CandidateModel {
   slug: string;
   model: ModelInfo & { tier: Tier };
@@ -149,26 +158,36 @@ export function classifyTask(input: string, rules: TierRule[]): ClassifierResult
   const moderateBase = normalized.length > 0 ? 0.5 : 0.3;
   const moderateConfidence = Math.max(moderateBase, moderateScore.score + 0.45);
 
-  if (deepScore.score >= 0.62) {
+  if (deepScore.score >= CLASSIFIER_THRESHOLDS.deep) {
     return {
       tier: "deep",
-      confidence: Math.min(0.98, Math.max(0.68, deepScore.score)),
+      confidence: Math.min(0.98, Math.max(0.55, deepScore.score)),
       matchedSignals: deepScore.signals,
       explanationKey: "deep-default"
     };
   }
 
-  if (routineScore.score >= 0.3 && deepScore.score < 0.35) {
+  if (
+    routineScore.score >= CLASSIFIER_THRESHOLDS.routine &&
+    deepScore.score < CLASSIFIER_THRESHOLDS.routineDeepCap
+  ) {
     return {
       tier: "routine",
-      confidence: Math.min(0.95, Math.max(0.65, routineScore.score + 0.18)),
+      confidence: Math.min(0.95, routineScore.score + 0.12),
       matchedSignals: routineScore.signals,
       explanationKey: "routine-default"
     };
   }
 
-  if (tokenCount > 0 && tokenCount < 8 && deepScore.score < 0.35) {
-    if (routineScore.score >= 0.15 && routineScore.score >= moderateScore.score) {
+  if (
+    tokenCount > 0 &&
+    tokenCount < 8 &&
+    deepScore.score < CLASSIFIER_THRESHOLDS.routineDeepCap
+  ) {
+    if (
+      routineScore.score >= CLASSIFIER_THRESHOLDS.shortRoutine &&
+      routineScore.score >= moderateScore.score
+    ) {
       return {
         tier: "routine",
         confidence: Math.min(0.85, Math.max(0.55, routineScore.score + 0.35)),
