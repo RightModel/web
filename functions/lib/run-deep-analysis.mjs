@@ -141,11 +141,11 @@ Be direct, calm, and specific. Explain why this task needs deeper reasoning and 
     }
   });
 
-  const payload = parseDeepAnalysisResponse(response.text || "");
+  const parsedResponse = parseDeepAnalysisResponse(response.text || "");
 
   return {
-    tier: payload.tier,
-    explanation: payload.explanation,
-    signals: payload.signals
+    tier: parsedResponse.tier,
+    explanation: parsedResponse.explanation,
+    signals: parsedResponse.signals
   };
 }
