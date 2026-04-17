@@ -6,6 +6,12 @@
       "**/.*",
       "**/node_modules/**"
     ],
+    "rewrites": [
+      {
+        "source": "/api/deep-analysis",
+        "function": "deepAnalysis"
+      }
+    ],
     "headers": [
       {
         "source": "**/*.@(js|css|svg|png|woff2)",

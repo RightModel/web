@@ -17,7 +17,8 @@
     "validate:tasks": "node scripts/validate-tasks.mjs",
     "validate:content": "npm run validate:rules && npm run validate:tasks",
     "fetch:caches": "node scripts/fetch-caches.mjs",
-    "generate:og": "node scripts/generate-og.mjs"
+    "generate:og": "node scripts/generate-og.mjs",
+    "write:functions-env": "node scripts/write-functions-env.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",

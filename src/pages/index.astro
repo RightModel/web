@@ -9,7 +9,7 @@ const rules = (await getCollection("rules")).map((entry) => entry.data);
 const tasks = (await getCollection("tasks")).map((entry) => entry.data);
 const pricing = getPricingCache();
 const explanations = getExplanationCache();
-const deepAnalysisEndpoint = import.meta.env.PUBLIC_DEEP_ANALYSIS_ENDPOINT || "";
+const deepAnalysisEndpoint = import.meta.env.PUBLIC_DEEP_ANALYSIS_ENDPOINT || "/api/deep-analysis";
 const commonTasks = commonTaskSlugs
   .map((slug) => tasks.find((entry) => entry.slug === slug))
   .filter((task): task is (typeof tasks)[number] => Boolean(task));

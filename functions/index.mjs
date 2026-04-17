@@ -9,19 +9,21 @@ import { runDeepAnalysis } from "./lib/run-deep-analysis.mjs";
 
 initializeApp();
 
-export const refreshPricing = onSchedule("0 2 * * *", async () => {
+const region = "us-central1";
+
+export const refreshPricing = onSchedule({ schedule: "0 2 * * *", region }, async () => {
   await refreshPricingSnapshot();
 });
 
-export const regenerateExplanations = onSchedule("0 3 * * *", async () => {
+export const regenerateExplanations = onSchedule({ schedule: "0 3 * * *", region }, async () => {
   await regenerateExplanationCache();
 });
 
-export const triggerRebuild = onSchedule("15 3 * * *", async () => {
+export const triggerRebuild = onSchedule({ schedule: "15 3 * * *", region }, async () => {
   await triggerRepositoryDispatch();
 });
 
-export const deepAnalysis = onRequest({ cors: true }, async (request, response) => {
+export const deepAnalysis = onRequest({ cors: true, region }, async (request, response) => {
   if (request.method !== "POST") {
     response.status(405).json({ error: "Method not allowed" });
     return;
