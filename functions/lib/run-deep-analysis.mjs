@@ -22,6 +22,47 @@ function summarizeSignals(signals) {
   return `${cleaned[0]} and ${cleaned[1]}`;
 }
 
+function normalizeSignals(signals) {
+  if (!Array.isArray(signals)) {
+    return [];
+  }
+
+  return signals.map((signal) => String(signal || "").trim()).filter(Boolean).slice(0, 4);
+}
+
+function parseDeepAnalysisResponse(text) {
+  const trimmed = String(text || "").trim();
+
+  if (!trimmed) {
+    throw new Error("Deep analysis returned empty text");
+  }
+
+  const start = trimmed.indexOf("{");
+  const end = trimmed.lastIndexOf("}");
+
+  if (start === -1 || end === -1 || end <= start) {
+    throw new Error("Deep analysis did not return JSON");
+  }
+
+  const parsed = JSON.parse(trimmed.slice(start, end + 1));
+  const explanation = typeof parsed.explanation === "string" ? parsed.explanation.trim() : "";
+  const tier = typeof parsed.tier === "string" ? parsed.tier.trim() : "";
+
+  if (!explanation) {
+    throw new Error("Deep analysis explanation missing");
+  }
+
+  if (tier !== "routine" && tier !== "moderate" && tier !== "deep") {
+    throw new Error("Deep analysis tier missing");
+  }
+
+  return {
+    tier,
+    explanation,
+    signals: normalizeSignals(parsed.signals)
+  };
+}
+
 function buildFallbackOpening(payload) {
   const tier = normalizeTier(payload.tier);
   const signals = Array.isArray(payload.matchedSignals) ? payload.matchedSignals : [];
@@ -63,7 +104,9 @@ function buildFallbackCloser(payload) {
 
 export function buildFallbackDeepAnalysis(payload) {
   return {
+    tier: normalizeTier(payload.tier),
     explanation: `${buildFallbackOpening(payload)} ${buildFallbackCloser(payload)}`,
+    signals: normalizeSignals(payload.matchedSignals),
     degraded: true
   };
 }
@@ -73,6 +116,8 @@ export async function runDeepAnalysis(payload) {
   const taskDescription = payload.q || "";
   const matchedSignals = Array.isArray(payload.matchedSignals) ? payload.matchedSignals.join(", ") : "";
   const modelLabel = payload.model || "recommended model";
+  const provider = payload.provider || "all";
+  const tier = normalizeTier(payload.tier);
   const model = process.env.RIGHTMODEL_VERTEX_MODEL || "gemini-2.5-flash";
   const client = new GoogleGenAI({ apiKey });
   const response = await client.models.generateContent({
@@ -80,17 +125,27 @@ export async function runDeepAnalysis(payload) {
     contents: `You are writing copy for rightmodel.dev.
 
 Task description: ${taskDescription}
+Provider filter: ${provider}
+Initial recommendation: ${modelLabel} (${tier})
 Matched signals: ${matchedSignals}
-Recommended model: ${modelLabel}
 
-Write exactly 2 to 3 sentences. Be direct, calm, and specific. Explain why this task needs deeper reasoning and what the larger model handles better. Do not use marketing language.`,
+Return JSON with these keys:
+- tier: one of "routine", "moderate", or "deep"
+- explanation: 2 to 3 sentences. The first sentence must say whether the recommendation is staying the same or changing. If it changes, name both the previous and revised recommendation.
+- signals: 2 to 4 short phrases that capture the most relevant signals in the task description.
+
+Be direct, calm, and specific. Explain why this task needs deeper reasoning and what the revised recommendation handles better. Do not use marketing language or markdown.`,
     config: {
       maxOutputTokens: 220,
       temperature: 0.3
     }
   });
 
+  const payload = parseDeepAnalysisResponse(response.text || "");
+
   return {
-    explanation: response.text || ""
+    tier: payload.tier,
+    explanation: payload.explanation,
+    signals: payload.signals
   };
 }

@@ -1,6 +1,6 @@
-import { buildRecommendation, estimateCostPer1kCalls } from "@/lib/classifier";
+import { buildRecommendation, buildRecommendationFromTier, estimateCostPer1kCalls } from "@/lib/classifier";
 import { formatDate, formatMultiplier, formatUsd, formatUsdPerCall, sentenceCase } from "@/lib/format";
-import type { ExplanationCache, PricingCache, Provider, RecommendationResult, TierRule } from "@/lib/types";
+import type { ExplanationCache, PricingCache, Provider, RecommendationResult, Tier, TierRule } from "@/lib/types";
 
 interface HomePageOptions {
   rules: TierRule[];
@@ -10,6 +10,55 @@ interface HomePageOptions {
 }
 
 type DeepStatus = "idle" | "loading" | "error";
+
+interface DeepAnalysisState {
+  deep: boolean;
+  deepExplanation: string;
+  heuristicRecommendation: RecommendationResult | null;
+  deepRecommendation: RecommendationResult | null;
+}
+
+type DeepAnalysisResultState = Pick<DeepAnalysisState, "deep" | "deepExplanation">;
+
+interface DeepPromptState {
+  confidence: number;
+  deepDismissed: boolean;
+  deepAnalysisComplete: boolean;
+}
+
+export function hasDeepAnalysisResult(state: DeepAnalysisResultState) {
+  return state.deep && state.deepExplanation.trim().length > 0;
+}
+
+export function shouldShowDeepPrompt({
+  confidence,
+  deepDismissed,
+  deepAnalysisComplete
+}: DeepPromptState) {
+  return !deepAnalysisComplete && confidence < 0.6 && !deepDismissed;
+}
+
+export function buildDeepAnalysisNote(
+  previousRecommendation: RecommendationResult | null,
+  currentRecommendation: RecommendationResult | null
+) {
+  if (!previousRecommendation || !currentRecommendation) {
+    return "Deep analysis updated the recommendation.";
+  }
+
+  if (previousRecommendation.modelSlug === currentRecommendation.modelSlug) {
+    return `Deep analysis confirmed ${currentRecommendation.model.label}.`;
+  }
+
+  return `Deep analysis updated this from ${previousRecommendation.model.label} to ${currentRecommendation.model.label}.`;
+}
+
+interface DeepAnalysisResponse {
+  tier: Tier;
+  explanation: string;
+  signals?: string[];
+  degraded?: boolean;
+}
 
 export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoint }: HomePageOptions) {
   const root = document.querySelector<HTMLElement>("[data-home-app]");
@@ -22,6 +71,9 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
   const providerButtons = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-provider]"));
   const output = root.querySelector<HTMLElement>("[data-output]")!;
   const outputCard = root.querySelector<HTMLElement>("[data-output-card]")!;
+  const analysisMeta = root.querySelector<HTMLElement>("[data-analysis-meta]")!;
+  const analysisBadge = root.querySelector<HTMLElement>("[data-analysis-badge]")!;
+  const analysisNote = root.querySelector<HTMLElement>("[data-analysis-note]")!;
   const secondaryControls = root.querySelector<HTMLElement>("[data-secondary-controls]")!;
   const modelName = root.querySelector<HTMLElement>("[data-model-name]")!;
   const overkillNote = root.querySelector<HTMLElement>("[data-overkill-note]")!;
@@ -45,13 +97,15 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
   let renderTimer: number | undefined;
   let deepStatus: DeepStatus = "idle";
   let deepDismissed = false;
+  let deepAnalysisRequestId = 0;
 
   const state = {
     q: "",
     provider: "all" as Provider,
     deep: false,
-    recommendation: null as RecommendationResult | null,
-    deepExplanation: ""
+    deepExplanation: "",
+    heuristicRecommendation: null as RecommendationResult | null,
+    deepRecommendation: null as RecommendationResult | null
   };
 
   function hydrateFromUrl() {
@@ -141,7 +195,7 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
   }
 
   function renderRecommendation() {
-    state.recommendation = buildRecommendation({
+    state.heuristicRecommendation = buildRecommendation({
       input: state.q,
       provider: state.provider,
       rules,
@@ -149,7 +203,9 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
       explanations
     });
 
-    const recommendation = state.recommendation;
+    const recommendation =
+      state.deep && state.deepRecommendation ? state.deepRecommendation : state.heuristicRecommendation;
+    const heuristicRecommendation = state.heuristicRecommendation;
     const pricingDate = new Date(pricing.retrieved_at);
     const now = new Date();
     const daysOld = Math.floor((now.getTime() - pricingDate.getTime()) / (1000 * 60 * 60 * 24));
@@ -157,20 +213,31 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
     if (!recommendation) {
       output.hidden = true;
       secondaryControls.hidden = true;
+      analysisMeta.hidden = true;
+      analysisBadge.textContent = "";
+      analysisNote.textContent = "";
       deepPrompt.hidden = true;
       copyStatus.textContent = "";
       return;
     }
 
+    const deepAnalysisComplete = hasDeepAnalysisResult(state);
+    const deepAnalysisNote = deepAnalysisComplete
+      ? buildDeepAnalysisNote(heuristicRecommendation, recommendation)
+      : "";
+
     output.hidden = false;
     secondaryControls.hidden = false;
     outputCard.dataset.tier = recommendation.tier;
+    analysisMeta.hidden = !deepAnalysisComplete;
+    analysisBadge.textContent = "Deep analysis";
+    analysisNote.textContent = deepAnalysisNote;
     modelName.textContent = `Use ${recommendation.model.label} (${recommendation.modelSlug}).`;
     overkillNote.textContent =
       recommendation.defaultReachModel && recommendation.costComparisonDirection === "cheaper"
         ? `${recommendation.defaultReachModel.label} is overkill here.`
         : recommendation.explanation.overkill_note.replace(/^./, (char) => char.toUpperCase());
-    whyText.textContent = state.deep && state.deepExplanation ? state.deepExplanation : recommendation.explanation.explanation;
+    whyText.textContent = deepAnalysisComplete ? state.deepExplanation : recommendation.explanation.explanation;
     signalsList.innerHTML = recommendation.matchedSignals.map((signal) => `<li>${signal}</li>`).join("");
     sourcesDate.textContent = formatDate(recommendation.pricingRetrievedAt);
     shortInputNote.hidden = !recommendation.shortInputNotice;
@@ -181,30 +248,48 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
     stalePricing.textContent = `Pricing data may be outdated. Last refreshed: ${formatDate(recommendation.pricingRetrievedAt)}.`;
     renderCostDelta(recommendation);
     renderBreakdown(recommendation);
-    deepPrompt.hidden = recommendation.confidence >= 0.6 || deepDismissed;
+    deepPrompt.hidden = shouldShowDeepPrompt({
+      confidence: heuristicRecommendation?.confidence || 0,
+      deepDismissed,
+      deepAnalysisComplete
+    });
     deepMessage.textContent =
       deepStatus === "error"
-        ? "Deep analysis is unavailable right now. Showing the heuristic recommendation."
-        : "Not sure? Run deep analysis. This uses about 500 tokens (~$0.00005) before it fires.";
+        ? "Deep analysis unavailable. Showing heuristic result."
+        : "This will use approximately 500 tokens (~$0.00005). Proceed?";
     deepProgress.hidden = deepStatus !== "loading";
-    whyPanel.open = false;
+
+    if (deepAnalysisComplete) {
+      whyPanel.open = true;
+    }
   }
 
   async function runDeepAnalysis() {
-    if (!state.recommendation) {
+    const heuristicRecommendation = state.heuristicRecommendation;
+
+    if (!heuristicRecommendation) {
       return;
     }
+
+    const requestId = ++deepAnalysisRequestId;
+    const requestSnapshot = {
+      q: state.q,
+      provider: state.provider,
+      tier: heuristicRecommendation.tier,
+      modelSlug: heuristicRecommendation.modelSlug
+    };
 
     deepStatus = "loading";
     deepPrompt.hidden = false;
     deepProgress.hidden = false;
-    deepMessage.textContent = "Running deep analysis...";
+    deepMessage.textContent = "Running deep analysis…";
 
     if (!deepAnalysisEndpoint) {
       deepStatus = "error";
       deepProgress.hidden = true;
       state.deep = false;
       state.deepExplanation = "";
+      state.deepRecommendation = null;
       pushUrl();
       renderRecommendation();
       return;
@@ -219,9 +304,9 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
         body: JSON.stringify({
           q: state.q,
           provider: state.provider,
-          tier: state.recommendation.tier,
-          matchedSignals: state.recommendation.matchedSignals,
-          model: state.recommendation.model.label
+          tier: heuristicRecommendation.tier,
+          matchedSignals: heuristicRecommendation.matchedSignals,
+          model: heuristicRecommendation.model.label
         })
       });
 
@@ -229,18 +314,67 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
         throw new Error("Deep analysis failed");
       }
 
-      const payload = (await response.json()) as { explanation?: string };
+      const payload = (await response.json()) as DeepAnalysisResponse;
+
+      if (payload.degraded) {
+        throw new Error("Deep analysis degraded");
+      }
+
+      const explanation = payload.explanation?.trim();
+      const tier = payload.tier;
+      const signals = Array.isArray(payload.signals)
+        ? payload.signals.map((signal) => String(signal || "").trim()).filter(Boolean).slice(0, 4)
+        : [];
+
+      if (!explanation || (tier !== "routine" && tier !== "moderate" && tier !== "deep")) {
+        throw new Error("Deep analysis returned an invalid response");
+      }
+
+      const deepRecommendation = buildRecommendationFromTier({
+        input: state.q,
+        provider: state.provider,
+        tier,
+        rules,
+        pricing,
+        explanations,
+        matchedSignals: signals.length > 0 ? signals : heuristicRecommendation.matchedSignals
+      });
+
+      if (!deepRecommendation) {
+        throw new Error("Deep analysis recommendation could not be built");
+      }
+
+      if (
+        requestId !== deepAnalysisRequestId ||
+        state.q !== requestSnapshot.q ||
+        state.provider !== requestSnapshot.provider ||
+        state.heuristicRecommendation?.tier !== requestSnapshot.tier ||
+        state.heuristicRecommendation?.modelSlug !== requestSnapshot.modelSlug
+      ) {
+        return;
+      }
+
       state.deep = true;
-      state.deepExplanation = payload.explanation || "";
+      state.deepExplanation = explanation;
+      state.deepRecommendation = deepRecommendation;
       deepStatus = "idle";
       deepDismissed = false;
       deepProgress.hidden = true;
       pushUrl();
       renderRecommendation();
     } catch {
+      if (
+        requestId !== deepAnalysisRequestId ||
+        state.q !== requestSnapshot.q ||
+        state.provider !== requestSnapshot.provider
+      ) {
+        return;
+      }
+
       deepStatus = "error";
       state.deep = false;
       state.deepExplanation = "";
+      state.deepRecommendation = null;
       deepProgress.hidden = true;
       pushUrl();
       renderRecommendation();
@@ -248,11 +382,13 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
   }
 
   function scheduleRender() {
+    deepAnalysisRequestId += 1;
     window.clearTimeout(renderTimer);
     renderTimer = window.setTimeout(() => {
       state.q = input.value.slice(0, 500);
       state.deep = false;
       state.deepExplanation = "";
+      state.deepRecommendation = null;
       deepStatus = "idle";
       deepDismissed = false;
       input.value = state.q;
@@ -285,9 +421,11 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
 
   for (const button of providerButtons) {
     button.addEventListener("click", () => {
+      deepAnalysisRequestId += 1;
       state.provider = (button.dataset.provider || "all") as Provider;
       state.deep = false;
       state.deepExplanation = "";
+      state.deepRecommendation = null;
       deepStatus = "idle";
       deepDismissed = false;
       updateProviderButtons();
@@ -305,9 +443,11 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
   });
 
   deepCancel.addEventListener("click", () => {
+    deepAnalysisRequestId += 1;
     deepStatus = "idle";
     state.deep = false;
     state.deepExplanation = "";
+    state.deepRecommendation = null;
     deepDismissed = true;
     pushUrl();
     renderRecommendation();

@@ -53,6 +53,10 @@ const commonTasks = commonTaskSlugs
 
       <section data-output hidden class="space-y-6" aria-live="polite">
         <article data-output-card class="space-y-3">
+          <div data-analysis-meta hidden class="home-analysis-meta">
+            <span data-analysis-badge class="home-analysis-badge"></span>
+            <p data-analysis-note class="home-analysis-note"></p>
+          </div>
           <h1 data-model-name class="home-answer-title"></h1>
           <p data-overkill-note class="home-answer-subtitle"></p>
           <p data-cost-delta class="home-answer-cost"></p>
@@ -63,7 +67,7 @@ const commonTasks = commonTaskSlugs
 
         <section data-secondary-controls hidden class="space-y-4">
           <details data-why-panel class="panel p-5 sm:p-6">
-            <summary class="link-quiet cursor-pointer text-sm">Why -&gt;</summary>
+            <summary class="link-quiet cursor-pointer text-sm">Why →</summary>
             <div class="mt-4 space-y-5">
               <p data-why-text class="text-sm leading-6 text-[color:var(--color-fg-default)]"></p>
 
@@ -117,7 +121,7 @@ const commonTasks = commonTaskSlugs
               <div class="h-full w-1/2 animate-pulse bg-[color:var(--color-accent)]"></div>
             </div>
             <p data-deep-message class="text-sm text-[color:var(--color-fg-default)]">
-              Not sure? Run deep analysis. This uses about 500 tokens (~$0.00005) before it fires.
+              This will use approximately 500 tokens (~$0.00005). Proceed?
             </p>
             <div class="mt-3 flex flex-wrap items-center gap-3">
               <button data-deep-run type="button" class="button-primary">
