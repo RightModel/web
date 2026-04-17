@@ -9,24 +9,30 @@ interface Props {
 const { pricingDate } = Astro.props;
 ---
 
-<footer class="border-t border-[color:var(--color-border-muted)] bg-[color:var(--color-bg)]">
-  <div class="mx-auto flex w-full max-w-[896px] flex-col gap-4 px-4 py-6 text-sm text-[color:var(--color-fg-muted)] md:flex-row md:items-start md:justify-between">
-    <p class="max-w-[24rem]">
+<footer class="mt-16 border-t py-10" style="border-color: var(--color-border-muted);">
+  <div class="page-shell grid gap-8 text-sm md:grid-cols-3">
+    <div class="space-y-2">
+      <p>
       Built by <a href="https://regnard.raquedan.com">Regnard Raquedan</a>. Free and open -
       <a href="https://github.com/rightmodel/web">contribute on GitHub</a>.
-    </p>
+      </p>
+    </div>
 
-    <div class="flex flex-wrap gap-x-4 gap-y-2">
+    <div class="space-y-2">
       {footerLinks.primary.map((link) => (
-        <a href={link.href}>{link.label}</a>
+        <p>
+          <a class="link-quiet" href={link.href}>{link.label}</a>
+        </p>
       ))}
     </div>
 
-    <div class="flex flex-wrap gap-x-4 gap-y-2">
+    <div class="space-y-2 text-muted">
       {footerLinks.legal.map((link) => (
-        <a href={link.href}>{link.label}</a>
+        <p>
+          <a class="link-quiet" href={link.href}>{link.label}</a>
+        </p>
       ))}
-      <span>Pricing data last refreshed: {formatDate(pricingDate)}</span>
+      <p>Pricing data last refreshed: {formatDate(pricingDate)}</p>
     </div>
   </div>
 </footer>

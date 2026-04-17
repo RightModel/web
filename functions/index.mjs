@@ -5,7 +5,7 @@ import { logger } from "firebase-functions";
 import { refreshPricingSnapshot } from "./lib/refresh-pricing.mjs";
 import { regenerateExplanationCache } from "./lib/regenerate-explanations.mjs";
 import { triggerRepositoryDispatch } from "./lib/rebuild.mjs";
-import { runDeepAnalysis } from "./lib/run-deep-analysis.mjs";
+import { buildFallbackDeepAnalysis, runDeepAnalysis } from "./lib/run-deep-analysis.mjs";
 
 initializeApp();
 
@@ -33,7 +33,13 @@ export const deepAnalysis = onRequest({ cors: true, region }, async (request, re
     const payload = await runDeepAnalysis(request.body || {});
     response.status(200).json(payload);
   } catch (error) {
-    logger.error("Deep analysis failed", error);
-    response.status(500).json({ error: "Deep analysis failed" });
+    logger.warn("Deep analysis degraded to fallback copy", error);
+
+    try {
+      response.status(200).json(buildFallbackDeepAnalysis(request.body || {}));
+    } catch (fallbackError) {
+      logger.error("Deep analysis fallback failed", fallbackError);
+      response.status(500).json({ error: "Deep analysis failed" });
+    }
   }
 });
