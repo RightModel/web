@@ -21,7 +21,6 @@ interface DeepAnalysisState {
 type DeepAnalysisResultState = Pick<DeepAnalysisState, "deep" | "deepExplanation">;
 
 interface DeepPromptState {
-  confidence: number;
   deepDismissed: boolean;
   deepAnalysisComplete: boolean;
 }
@@ -31,11 +30,20 @@ export function hasDeepAnalysisResult(state: DeepAnalysisResultState) {
 }
 
 export function shouldShowDeepPrompt({
-  confidence,
   deepDismissed,
   deepAnalysisComplete
 }: DeepPromptState) {
-  return !deepAnalysisComplete && confidence < 0.6 && !deepDismissed;
+  return !deepAnalysisComplete && !deepDismissed;
+}
+
+export function buildDeepPromptMessage(confidence: number) {
+  const costDisclosure = "This will use approximately 500 tokens (~$0.00005). Proceed?";
+
+  if (confidence < 0.6) {
+    return `Not sure? Run deep analysis. ${costDisclosure}`;
+  }
+
+  return `Want a second pass? Run deep analysis. ${costDisclosure}`;
 }
 
 export function buildDeepAnalysisNote(
@@ -249,14 +257,13 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
     renderCostDelta(recommendation);
     renderBreakdown(recommendation);
     deepPrompt.hidden = shouldShowDeepPrompt({
-      confidence: heuristicRecommendation?.confidence || 0,
       deepDismissed,
       deepAnalysisComplete
     });
     deepMessage.textContent =
       deepStatus === "error"
         ? "Deep analysis unavailable. Showing heuristic result."
-        : "This will use approximately 500 tokens (~$0.00005). Proceed?";
+        : buildDeepPromptMessage(heuristicRecommendation?.confidence || 0);
     deepProgress.hidden = deepStatus !== "loading";
 
     if (deepAnalysisComplete) {

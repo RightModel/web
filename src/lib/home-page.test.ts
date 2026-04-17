@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildDeepAnalysisNote, hasDeepAnalysisResult, shouldShowDeepPrompt } from "@/lib/home-page";
+import { buildDeepAnalysisNote, buildDeepPromptMessage, hasDeepAnalysisResult, shouldShowDeepPrompt } from "@/lib/home-page";
 import type { RecommendationResult } from "@/lib/types";
 
 describe("home page deep analysis UI helpers", () => {
@@ -9,10 +9,9 @@ describe("home page deep analysis UI helpers", () => {
     expect(hasDeepAnalysisResult({ deep: false, deepExplanation: "More context helps." })).toBe(false);
   });
 
-  it("hides the deep-analysis CTA after completion or dismissal", () => {
+  it("shows the deep-analysis CTA until it is completed or dismissed", () => {
     expect(
       shouldShowDeepPrompt({
-        confidence: 0.4,
         deepDismissed: false,
         deepAnalysisComplete: true
       })
@@ -20,7 +19,6 @@ describe("home page deep analysis UI helpers", () => {
 
     expect(
       shouldShowDeepPrompt({
-        confidence: 0.4,
         deepDismissed: false,
         deepAnalysisComplete: false
       })
@@ -28,19 +26,19 @@ describe("home page deep analysis UI helpers", () => {
 
     expect(
       shouldShowDeepPrompt({
-        confidence: 0.7,
-        deepDismissed: false,
-        deepAnalysisComplete: false
-      })
-    ).toBe(false);
-
-    expect(
-      shouldShowDeepPrompt({
-        confidence: 0.4,
         deepDismissed: true,
         deepAnalysisComplete: false
       })
     ).toBe(false);
+  });
+
+  it("adjusts the deep-analysis prompt copy based on confidence", () => {
+    expect(buildDeepPromptMessage(0.4)).toBe(
+      "Not sure? Run deep analysis. This will use approximately 500 tokens (~$0.00005). Proceed?"
+    );
+    expect(buildDeepPromptMessage(0.7)).toBe(
+      "Want a second pass? Run deep analysis. This will use approximately 500 tokens (~$0.00005). Proceed?"
+    );
   });
 
   it("describes whether deep analysis confirmed or changed the recommendation", () => {
