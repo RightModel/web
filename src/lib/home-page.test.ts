@@ -2,10 +2,10 @@ import { describe, expect, it } from "vitest";
 import { hasDeepAnalysisResult, shouldShowDeepPrompt } from "@/lib/home-page";
 
 describe("home page deep analysis UI helpers", () => {
-  it("treats deep analysis as complete only when explanation text exists", () => {
-    expect(hasDeepAnalysisResult({ deep: true, deepExplanation: "More context helps." })).toBe(true);
-    expect(hasDeepAnalysisResult({ deep: true, deepExplanation: "   " })).toBe(false);
-    expect(hasDeepAnalysisResult({ deep: false, deepExplanation: "More context helps." })).toBe(false);
+  it("treats deep analysis as complete only when a tier was returned", () => {
+    expect(hasDeepAnalysisResult({ deep: true, deepTier: "deep" })).toBe(true);
+    expect(hasDeepAnalysisResult({ deep: true, deepTier: null })).toBe(false);
+    expect(hasDeepAnalysisResult({ deep: false, deepTier: "deep" })).toBe(false);
   });
 
   it("shows the deep-analysis CTA only for low-confidence heuristic results", () => {

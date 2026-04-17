@@ -1,6 +1,16 @@
 import { buildRecommendation, estimateCostPer1kCalls } from "@/lib/classifier";
 import { formatDate, formatMultiplier, formatUsd, formatUsdPerCall, sentenceCase } from "@/lib/format";
-import type { ExplanationCache, PricingCache, Provider, RecommendationResult, TierRule } from "@/lib/types";
+import type { ExplanationCache, PricingCache, Provider, RecommendationResult, Tier, TierRule } from "@/lib/types";
+
+const TIER_LABEL: Record<Tier, string> = {
+  routine: "routine",
+  moderate: "moderate",
+  deep: "deep"
+};
+
+function isTier(value: unknown): value is Tier {
+  return value === "routine" || value === "moderate" || value === "deep";
+}
 
 interface HomePageOptions {
   rules: TierRule[];
@@ -13,7 +23,7 @@ type DeepStatus = "idle" | "loading" | "error";
 
 interface DeepAnalysisResultState {
   deep: boolean;
-  deepExplanation: string;
+  deepTier: Tier | null;
 }
 
 interface DeepPromptState {
@@ -23,7 +33,7 @@ interface DeepPromptState {
 }
 
 export function hasDeepAnalysisResult(state: DeepAnalysisResultState) {
-  return state.deep && state.deepExplanation.trim().length > 0;
+  return state.deep && state.deepTier !== null;
 }
 
 export function shouldShowDeepPrompt({
@@ -64,6 +74,7 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
   const deepRun = root.querySelector<HTMLButtonElement>("[data-deep-run]")!;
   const deepCancel = root.querySelector<HTMLButtonElement>("[data-deep-cancel]")!;
   const deepProgress = root.querySelector<HTMLElement>("[data-deep-progress]")!;
+  const deepBadge = root.querySelector<HTMLElement>("[data-deep-badge]")!;
 
   let renderTimer: number | undefined;
   let deepStatus: DeepStatus = "idle";
@@ -74,7 +85,8 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
     provider: "all" as Provider,
     deep: false,
     recommendation: null as RecommendationResult | null,
-    deepExplanation: ""
+    heuristicRecommendation: null as RecommendationResult | null,
+    deepTier: null as Tier | null
   };
 
   function hydrateFromUrl() {
@@ -164,13 +176,26 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
   }
 
   function renderRecommendation() {
-    state.recommendation = buildRecommendation({
+    const heuristic = buildRecommendation({
       input: state.q,
       provider: state.provider,
       rules,
       pricing,
       explanations
     });
+    state.heuristicRecommendation = heuristic;
+
+    const tierOverride = state.deep && state.deepTier ? state.deepTier : undefined;
+    state.recommendation = tierOverride
+      ? buildRecommendation({
+          input: state.q,
+          provider: state.provider,
+          rules,
+          pricing,
+          explanations,
+          tierOverride
+        })
+      : heuristic;
 
     const recommendation = state.recommendation;
     const pricingDate = new Date(pricing.retrieved_at);
@@ -182,6 +207,7 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
       output.hidden = true;
       secondaryControls.hidden = true;
       deepPrompt.hidden = true;
+      deepBadge.hidden = true;
       copyStatus.textContent = "";
       return;
     }
@@ -194,7 +220,20 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
       recommendation.defaultReachModel && recommendation.costComparisonDirection === "cheaper"
         ? `${recommendation.defaultReachModel.label} is overkill here.`
         : recommendation.explanation.overkill_note.replace(/^./, (char) => char.toUpperCase());
-    whyText.textContent = deepAnalysisComplete ? state.deepExplanation : recommendation.explanation.explanation;
+    whyText.textContent = recommendation.explanation.explanation;
+
+    if (deepAnalysisComplete && heuristic) {
+      const changed = heuristic.tier !== recommendation.tier;
+      deepBadge.hidden = false;
+      deepBadge.dataset.variant = changed ? "revised" : "confirmed";
+      deepBadge.textContent = changed
+        ? `Revised by deep analysis — heuristic suggested ${TIER_LABEL[heuristic.tier]} (${heuristic.model.label})`
+        : "Confirmed by deep analysis";
+    } else {
+      deepBadge.hidden = true;
+      deepBadge.textContent = "";
+      delete deepBadge.dataset.variant;
+    }
     signalsList.innerHTML = recommendation.matchedSignals.map((signal) => `<li>${signal}</li>`).join("");
     sourcesDate.textContent = formatDate(recommendation.pricingRetrievedAt);
     shortInputNote.hidden = !recommendation.shortInputNotice;
@@ -232,7 +271,7 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
       deepStatus = "error";
       deepProgress.hidden = true;
       state.deep = false;
-      state.deepExplanation = "";
+      state.deepTier = null;
       pushUrl();
       renderRecommendation();
       return;
@@ -257,15 +296,14 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
         throw new Error("Deep analysis failed");
       }
 
-      const payload = (await response.json()) as { explanation?: string };
-      const explanation = typeof payload.explanation === "string" ? payload.explanation.trim() : "";
+      const payload = (await response.json()) as { tier?: unknown };
 
-      if (!explanation) {
+      if (!isTier(payload.tier)) {
         throw new Error("Deep analysis returned an invalid response");
       }
 
       state.deep = true;
-      state.deepExplanation = explanation;
+      state.deepTier = payload.tier;
       deepStatus = "idle";
       deepDismissed = false;
       deepProgress.hidden = true;
@@ -274,7 +312,7 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
     } catch {
       deepStatus = "error";
       state.deep = false;
-      state.deepExplanation = "";
+      state.deepTier = null;
       deepProgress.hidden = true;
       pushUrl();
       renderRecommendation();
@@ -286,7 +324,7 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
     renderTimer = window.setTimeout(() => {
       state.q = input.value.slice(0, 500);
       state.deep = false;
-      state.deepExplanation = "";
+      state.deepTier = null;
       deepStatus = "idle";
       deepDismissed = false;
       input.value = state.q;
@@ -321,7 +359,7 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
     button.addEventListener("click", () => {
       state.provider = (button.dataset.provider || "all") as Provider;
       state.deep = false;
-      state.deepExplanation = "";
+      state.deepTier = null;
       deepStatus = "idle";
       deepDismissed = false;
       updateProviderButtons();
@@ -341,7 +379,7 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
   deepCancel.addEventListener("click", () => {
     deepStatus = "idle";
     state.deep = false;
-    state.deepExplanation = "";
+    state.deepTier = null;
     deepDismissed = true;
     pushUrl();
     renderRecommendation();

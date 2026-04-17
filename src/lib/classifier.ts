@@ -351,19 +351,21 @@ export function buildRecommendation(params: {
   rules: TierRule[];
   pricing: PricingCache;
   explanations: ExplanationCache;
+  tierOverride?: Tier;
 }): RecommendationResult | null {
-  const { input, provider, rules, pricing, explanations } = params;
+  const { input, provider, rules, pricing, explanations, tierOverride } = params;
 
   if (!input.trim()) {
     return null;
   }
 
   const classification = classifyTask(input, rules);
+  const tier = tierOverride ?? classification.tier;
   return finalizeRecommendation({
     input,
     provider,
-    tier: classification.tier,
-    classification,
+    tier,
+    classification: tierOverride ? { ...classification, tier } : classification,
     pricing,
     explanations
   });

@@ -427,6 +427,32 @@ select option {
   color: var(--color-fg-muted);
 }
 
+.home-deep-badge {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  align-self: flex-start;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: var(--color-bg-muted);
+  color: var(--color-fg-default);
+  border: 1px solid transparent;
+}
+
+.home-deep-badge::before {
+  content: "✨";
+  font-size: 0.85rem;
+}
+
+.home-deep-badge[data-variant="revised"] {
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  color: var(--color-accent);
+  border-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+}
+
 .home-answer-cost {
   margin: 0;
   font-size: 0.95rem;
