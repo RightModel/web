@@ -1,5 +1,5 @@
 import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
-import { requireEnv } from "./config.mjs";
+import { requireProjectId } from "./config.mjs";
 
 const secretManager = new SecretManagerServiceClient();
 const secretCache = new Map();
@@ -11,7 +11,7 @@ export async function getRequiredSecret(name) {
     return cached;
   }
 
-  const projectId = requireEnv("GOOGLE_CLOUD_PROJECT");
+  const projectId = requireProjectId();
   const loadPromise = loadSecret(name, projectId);
   secretCache.set(name, loadPromise);
 

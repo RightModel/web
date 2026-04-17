@@ -37,7 +37,6 @@ function quoteEnv(value) {
 const outputPath = resolve(process.cwd(), "functions", `.env.${projectId}`);
 const fileContents = [
   `RIGHTMODEL_CACHE_BUCKET=${quoteEnv(process.env.RIGHTMODEL_CACHE_BUCKET)}`,
-  `GOOGLE_CLOUD_PROJECT=${quoteEnv(projectId)}`,
   `RIGHTMODEL_GITHUB_OWNER=${quoteEnv(githubOwner)}`,
   `RIGHTMODEL_GITHUB_REPO=${quoteEnv(githubRepo)}`,
   `RIGHTMODEL_VERTEX_MODEL=${quoteEnv(process.env.RIGHTMODEL_VERTEX_MODEL || "gemini-2.5-flash")}`
