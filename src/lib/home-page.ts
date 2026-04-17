@@ -11,6 +11,29 @@ interface HomePageOptions {
 
 type DeepStatus = "idle" | "loading" | "error";
 
+interface DeepAnalysisResultState {
+  deep: boolean;
+  deepExplanation: string;
+}
+
+interface DeepPromptState {
+  confidence: number;
+  deepDismissed: boolean;
+  deepAnalysisComplete: boolean;
+}
+
+export function hasDeepAnalysisResult(state: DeepAnalysisResultState) {
+  return state.deep && state.deepExplanation.trim().length > 0;
+}
+
+export function shouldShowDeepPrompt({
+  confidence,
+  deepDismissed,
+  deepAnalysisComplete
+}: DeepPromptState) {
+  return confidence < 0.6 && !deepDismissed && !deepAnalysisComplete;
+}
+
 export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoint }: HomePageOptions) {
   const root = document.querySelector<HTMLElement>("[data-home-app]");
 
@@ -153,6 +176,7 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
     const pricingDate = new Date(pricing.retrieved_at);
     const now = new Date();
     const daysOld = Math.floor((now.getTime() - pricingDate.getTime()) / (1000 * 60 * 60 * 24));
+    const deepAnalysisComplete = hasDeepAnalysisResult(state);
 
     if (!recommendation) {
       output.hidden = true;
@@ -170,7 +194,7 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
       recommendation.defaultReachModel && recommendation.costComparisonDirection === "cheaper"
         ? `${recommendation.defaultReachModel.label} is overkill here.`
         : recommendation.explanation.overkill_note.replace(/^./, (char) => char.toUpperCase());
-    whyText.textContent = state.deep && state.deepExplanation ? state.deepExplanation : recommendation.explanation.explanation;
+    whyText.textContent = deepAnalysisComplete ? state.deepExplanation : recommendation.explanation.explanation;
     signalsList.innerHTML = recommendation.matchedSignals.map((signal) => `<li>${signal}</li>`).join("");
     sourcesDate.textContent = formatDate(recommendation.pricingRetrievedAt);
     shortInputNote.hidden = !recommendation.shortInputNotice;
@@ -181,13 +205,17 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
     stalePricing.textContent = `Pricing data may be outdated. Last refreshed: ${formatDate(recommendation.pricingRetrievedAt)}.`;
     renderCostDelta(recommendation);
     renderBreakdown(recommendation);
-    deepPrompt.hidden = recommendation.confidence >= 0.6 || deepDismissed;
+    deepPrompt.hidden = !shouldShowDeepPrompt({
+      confidence: recommendation.confidence,
+      deepDismissed,
+      deepAnalysisComplete
+    });
     deepMessage.textContent =
       deepStatus === "error"
-        ? "Deep analysis is unavailable right now. Showing the heuristic recommendation."
+        ? "Deep analysis unavailable. Showing heuristic result."
         : "Not sure? Run deep analysis. This uses about 500 tokens (~$0.00005) before it fires.";
     deepProgress.hidden = deepStatus !== "loading";
-    whyPanel.open = false;
+    whyPanel.open = deepAnalysisComplete;
   }
 
   async function runDeepAnalysis() {
@@ -230,8 +258,14 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
       }
 
       const payload = (await response.json()) as { explanation?: string };
+      const explanation = typeof payload.explanation === "string" ? payload.explanation.trim() : "";
+
+      if (!explanation) {
+        throw new Error("Deep analysis returned an invalid response");
+      }
+
       state.deep = true;
-      state.deepExplanation = payload.explanation || "";
+      state.deepExplanation = explanation;
       deepStatus = "idle";
       deepDismissed = false;
       deepProgress.hidden = true;
