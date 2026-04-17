@@ -1,15 +1,24 @@
 tier: deep
 label: Deep reasoning
-description: Architecture decisions, security review, complex debugging, large codebase analysis.
+description: Architecture decisions, security review, complex debugging, large
+  codebase analysis, novel problems.
 signals:
   match_verbs:
     - design
     - architect
     - review security
     - audit
-    - debug
     - diagnose
     - reason about
+    - model
+    - reverse engineer
+    - orchestrate
+    - benchmark
+    - profile
+    - load test
+    - threat model
+    - decouple
+    - investigate
   match_patterns:
     - architecture
     - vulnerability
@@ -21,10 +30,54 @@ signals:
     - tradeoff
     - memory leak
     - large codebase
+    - at scale
+    - high throughput
+    - cross-service
+    - cross service
+    - rate limit
+    - consensus
+    - eventual consistency
+    - migration strategy
+    - scaling strategy
+    - failure mode
+    - root cause
+    - zero trust
+    - microservices
+    - event driven
+    - event sourcing
+    - disaster recovery
+    - data governance
+    - cryptography
+    - deadlock
+    - thread pool
+    - concurrency
+    - bottleneck
+    - zero downtime
+    - blue-green deployment
+    - end-to-end encryption
+    - reverse engineering
+    - load balancer
+    - kubernetes cluster
+    - fault tolerance
   force_patterns:
     - security vulnerabilit
     - system design
     - database schema
+    - from scratch
+    - operating system
+    - compiler
+    - kernel
+    - consensus algorithm
+    - distributed system
+    - cryptography implementation
+    - custom crypto
+    - zero day
+    - zero-day
+    - real-time operating system
+    - rtos
+    - custom database engine
+    - custom network protocol
+    - bare metal
   min_tokens: 0
 notes:
   - Multi-hop reasoning is likely required.

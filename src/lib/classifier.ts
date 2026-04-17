@@ -91,7 +91,7 @@ function scoreRule(normalized: string, tokenCount: number, rule: TierRule): Scor
 
   for (const verb of rule.signals.match_verbs || []) {
     if (includesPattern(normalized, verb)) {
-      score += 0.14;
+      score += 0.18;
       signals.push(verb);
     }
   }
@@ -158,13 +158,33 @@ export function classifyTask(input: string, rules: TierRule[]): ClassifierResult
     };
   }
 
-  if (routineScore.score >= 0.5 && deepScore.score < 0.35) {
+  if (routineScore.score >= 0.3 && deepScore.score < 0.35) {
     return {
       tier: "routine",
       confidence: Math.min(0.95, Math.max(0.65, routineScore.score + 0.18)),
       matchedSignals: routineScore.signals,
       explanationKey: "routine-default"
     };
+  }
+
+  if (tokenCount > 0 && tokenCount < 8 && deepScore.score < 0.35) {
+    if (routineScore.score >= 0.15 && routineScore.score >= moderateScore.score) {
+      return {
+        tier: "routine",
+        confidence: Math.min(0.85, Math.max(0.55, routineScore.score + 0.35)),
+        matchedSignals: routineScore.signals,
+        explanationKey: "routine-default"
+      };
+    }
+
+    if (routineScore.score === 0 && moderateScore.score === 0) {
+      return {
+        tier: "routine",
+        confidence: 0.5,
+        matchedSignals: ["short, bounded phrasing"],
+        explanationKey: "routine-default"
+      };
+    }
   }
 
   const moderateSignals = moderateScore.signals.length ? moderateScore.signals : ["ambiguous scope"];

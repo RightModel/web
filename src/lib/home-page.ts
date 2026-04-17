@@ -2,12 +2,6 @@ import { buildRecommendation, estimateCostPer1kCalls } from "@/lib/classifier";
 import { formatDate, formatMultiplier, formatUsd, formatUsdPerCall, sentenceCase } from "@/lib/format";
 import type { ExplanationCache, PricingCache, Provider, RecommendationResult, Tier, TierRule } from "@/lib/types";
 
-const TIER_LABEL: Record<Tier, string> = {
-  routine: "routine",
-  moderate: "moderate",
-  deep: "deep"
-};
-
 function isTier(value: unknown): value is Tier {
   return value === "routine" || value === "moderate" || value === "deep";
 }
@@ -75,6 +69,7 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
   const deepCancel = root.querySelector<HTMLButtonElement>("[data-deep-cancel]")!;
   const deepProgress = root.querySelector<HTMLElement>("[data-deep-progress]")!;
   const deepBadge = root.querySelector<HTMLElement>("[data-deep-badge]")!;
+  const unsureBadge = root.querySelector<HTMLElement>("[data-unsure-badge]")!;
 
   let renderTimer: number | undefined;
   let deepStatus: DeepStatus = "idle";
@@ -208,6 +203,7 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
       secondaryControls.hidden = true;
       deepPrompt.hidden = true;
       deepBadge.hidden = true;
+      unsureBadge.hidden = true;
       copyStatus.textContent = "";
       return;
     }
@@ -226,14 +222,16 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
       const changed = heuristic.tier !== recommendation.tier;
       deepBadge.hidden = false;
       deepBadge.dataset.variant = changed ? "revised" : "confirmed";
-      deepBadge.textContent = changed
-        ? `Revised by deep analysis — heuristic suggested ${TIER_LABEL[heuristic.tier]} (${heuristic.model.label})`
-        : "Confirmed by deep analysis";
+      deepBadge.textContent = changed ? "Updated by deep analysis." : "Confirmed by deep analysis.";
     } else {
       deepBadge.hidden = true;
       deepBadge.textContent = "";
       delete deepBadge.dataset.variant;
     }
+
+    const unsure = recommendation.confidence < 0.6 && !deepAnalysisComplete;
+    unsureBadge.hidden = !unsure;
+    unsureBadge.textContent = unsure ? "The heuristic is unsure on this one." : "";
     signalsList.innerHTML = recommendation.matchedSignals.map((signal) => `<li>${signal}</li>`).join("");
     sourcesDate.textContent = formatDate(recommendation.pricingRetrievedAt);
     shortInputNote.hidden = !recommendation.shortInputNotice;

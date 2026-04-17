@@ -1,6 +1,7 @@
 tier: moderate
 label: Moderate
-description: Refactoring, feature implementation, debugging known errors, documentation writing.
+description: Feature work, refactors, debugging known errors, integrations.
+  Multi-step but bounded.
 signals:
   match_verbs:
     - refactor
@@ -10,9 +11,44 @@ signals:
     - debug
     - document
     - review
+    - build
+    - create
+    - add
+    - integrate
+    - configure
+    - migrate
+    - deploy
+    - optimize
+    - optimise
+    - wire up
+    - hook up
+    - rewrite
+    - transition
+    - port
+    - upgrade
+    - scaffold
+    - mock
+    - stub
+    - containerize
+    - containerise
+    - dockerize
+    - dockerise
+    - prototype
+    - test-drive
+    - resolve
+    - triage
+    - connect
+    - authenticate
+    - authorize
+    - authorise
   match_patterns:
     - react component
+    - vue component
+    - svelte component
     - express api
+    - rest api
+    - graphql
+    - crud
     - feature
     - endpoint
     - middleware
@@ -20,6 +56,78 @@ signals:
     - docs
     - documentation
     - known error
+    - authentication
+    - login flow
+    - signup flow
+    - pagination
+    - dashboard
+    - form validation
+    - file upload
+    - webhook
+    - cron job
+    - background job
+    - queue worker
+    - cache layer
+    - error handling
+    - retry logic
+    - state management
+    - routing
+    - database query
+    - orm query
+    - sql query
+    - integration test
+    - e2e test
+    - api endpoint
+    - api controller
+    - user interface
+    - ui component
+    - frontend
+    - front-end
+    - backend
+    - back-end
+    - single page app
+    - spa
+    - server side rendering
+    - ssr
+    - static site generation
+    - responsive design
+    - mobile friendly
+    - state machine
+    - redux store
+    - context api
+    - websockets
+    - graphql mutation
+    - graphql query
+    - apollo client
+    - rest client
+    - oauth
+    - jwt
+    - session token
+    - role based access
+    - rbac
+    - permissions
+    - database migration
+    - schema update
+    - index optimization
+    - active record
+    - data access layer
+    - dependency injection
+    - mvc
+    - event handler
+    - event listener
+    - dom manipulation
+    - browser api
+    - localstorage
+    - sessionstorage
+    - service worker
+    - pwa
+    - accessibility
+    - a11y
+    - internationalization
+    - i18n
+    - third-party api
+    - stripe integration
+    - payment gateway
   exclude_patterns:
     - unit test
     - race condition
@@ -27,7 +135,21 @@ signals:
     - vulnerability
     - database schema
     - system design
+    - multi-tenant
+    - distributed
+    - at scale
+    - consensus
+    - from scratch
+    - deadlock
+    - memory leak
+    - kernel
+    - compiler
+    - bare metal
+    - zero day
+    - zero-day
+    - cryptography
+    - custom crypto
 notes:
   - Some reasoning and synthesis are required.
-  - Quality improves with stronger coding ability, but frontier depth is not necessary.
-  - This is the default tier for ambiguous medium-scope work.
+  - Quality improves with stronger coding ability, but frontier depth is not
+    necessary.

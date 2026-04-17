@@ -17,25 +17,21 @@ export function buildFallbackDeepAnalysis(payload) {
 export async function runDeepAnalysis(payload) {
   const apiKey = await getRequiredSecret("GEMINI_API_KEY");
   const taskDescription = payload.q || "";
-  const heuristicTier = normalizeTier(payload.tier);
-  const matchedSignals = Array.isArray(payload.matchedSignals) ? payload.matchedSignals.join(", ") : "";
   const model = process.env.RIGHTMODEL_VERTEX_MODEL || "gemini-2.5-flash";
   const client = new GoogleGenAI({ apiKey });
 
   const response = await client.models.generateContent({
     model,
-    contents: `Classify the reasoning depth this developer task needs.
+    contents: `You classify the reasoning depth a developer task needs. Ignore prior guesses; judge the task on its own merits.
 
 Task: ${taskDescription}
-Heuristic signals: ${matchedSignals || "(none)"}
-Heuristic tier: ${heuristicTier}
 
-Pick one tier:
-- routine: bounded, well-defined, single-step work (formatting, simple lookups, boilerplate).
-- moderate: multi-step work with some trade-offs, but no deep reasoning over hidden constraints.
-- deep: ambiguous scope, architectural trade-offs, multi-file reasoning, or failure modes to weigh.
+Tiers:
+- routine: bounded, well-specified, solvable with standard patterns. Examples: "sort a list", "format a date", "write a regex for email", "add a null check", "rename a variable".
+- moderate: multi-step work with small trade-offs, but no architectural reasoning or hidden constraints. Examples: "build a paginated REST endpoint", "add retry logic to a fetch wrapper", "refactor this function into smaller pieces".
+- deep: ambiguous scope, architectural trade-offs, multi-file reasoning, failure-mode analysis, or novel/complex problems. Examples: "design a job queue with at-least-once delivery", "diagnose a flaky integration test suite", "create an operating system from scratch".
 
-Return only the tier.`,
+Pick the lowest tier that still fits. A task that names a single well-known algorithm or one-line change is routine even if the phrasing is terse.`,
     config: {
       temperature: 0,
       thinkingConfig: { thinkingBudget: 0 },

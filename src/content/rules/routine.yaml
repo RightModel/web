@@ -1,6 +1,7 @@
 tier: routine
 label: Routine
-description: Formatting, translation, summarisation, boilerplate generation, simple Q&A.
+description: Bounded, well-defined single-step work. Formatting, string and data
+  ops, boilerplate, simple lookups.
 signals:
   match_verbs:
     - format
@@ -9,10 +10,134 @@ signals:
     - summarise
     - rename
     - fix typo
+    - fix a typo
     - add comment
+    - add a comment
     - add docstring
     - convert
     - list
+    - sort
+    - alphabetize
+    - alphabetise
+    - order
+    - reorder
+    - count
+    - filter
+    - parse
+    - split
+    - join
+    - trim
+    - strip
+    - escape
+    - encode
+    - decode
+    - hash
+    - compare
+    - merge
+    - dedupe
+    - deduplicate
+    - round
+    - clamp
+    - uppercase
+    - lowercase
+    - capitalize
+    - capitalise
+    - reverse
+    - truncate
+    - pad
+    - replace
+    - remove
+    - extract
+    - slice
+    - pluralize
+    - pluralise
+    - singularize
+    - singularise
+    - prettify
+    - minify
+    - stringify
+    - serialize
+    - serialise
+    - deserialize
+    - deserialise
+    - sanitize
+    - sanitise
+    - normalize
+    - normalise
+    - calculate
+    - compute
+    - sum
+    - average
+    - tally
+    - validate
+    - print
+    - log
+    - spellcheck
+    - lint
+    - find
+    - search for
+    - titlecase
+    - camelcase
+    - snakecase
+    - kebabcase
+    - pascalcase
+    - indent
+    - unindent
+    - align
+    - wrap
+    - unwrap
+    - fold
+    - unfold
+    - comment out
+    - uncomment
+    - stub out
+    - cast
+    - typecast
+    - coerce
+    - mock out
+    - scaffold out
+    - flesh out
+    - clean up
+    - tidy up
+    - beautify
+    - destructure
+    - spread
+    - map over
+    - prepend
+    - append
+    - unshift
+    - pop
+    - shift
+    - splice
+    - flatten
+    - groupBy
+    - group by
+    - sort by
+    - order by
+    - partition
+    - chunk
+    - shuffle
+    - randomize
+    - randomise
+    - sample
+    - pick
+    - omit
+    - zip
+    - unzip
+    - debounce
+    - throttle
+    - delay
+    - defer
+    - retry
+    - timeout
+    - clear timeout
+    - set interval
+    - clear interval
+    - fetch data
+    - make api call
+    - send request
+    - read file
+    - write file
   match_patterns:
     - unit test
     - write unit tests
@@ -22,6 +147,115 @@ signals:
     - summarize
     - summarise
     - meeting notes
+    - one-liner
+    - one liner
+    - regex
+    - regular expression
+    - cron expression
+    - gitignore
+    - env var
+    - environment variable
+    - readme
+    - commit message
+    - helper function
+    - utility function
+    - getter
+    - setter
+    - enum
+    - constant
+    - slug
+    - uuid
+    - random string
+    - date format
+    - email regex
+    - phone regex
+    - json to
+    - csv to
+    - yaml to
+    - a list
+    - the list
+    - an array
+    - a string
+    - a dictionary
+    - a map
+    - a set
+    - camel case
+    - snake case
+    - kebab case
+    - pascal case
+    - typescript interface
+    - ts interface
+    - typescript type
+    - ts type
+    - prop types
+    - jsdoc
+    - doc string
+    - class component
+    - functional component
+    - for loop
+    - while loop
+    - switch statement
+    - if else
+    - ternary
+    - try catch
+    - try/catch
+    - promise.all
+    - async await
+    - async/await
+    - arrow function
+    - lambda
+    - closure
+    - callback
+    - array map
+    - array filter
+    - array reduce
+    - object keys
+    - object values
+    - object entries
+    - json parse
+    - json stringify
+    - rest parameter
+    - spread operator
+    - template literal
+    - string interpolation
+    - regular expression for
+    - regex for
+    - css class
+    - html tag
+    - html element
+    - svg icon
+    - image tag
+    - button click
+    - text input
+    - select box
+    - checkbox
+    - radio button
+    - simple script
+    - bash script
+    - shell script
+    - powershell script
+    - npm install
+    - yarn add
+    - pip install
+    - gem install
+    - cargo add
+    - docker run
+    - git commit
+    - git push
+    - git pull
+    - git checkout
+    - git branch
+    - git merge
+    - git rebase
+    - curl command
+    - wget command
+    - ssh command
+    - scp command
+    - tar command
+    - grep command
+    - sed command
+    - awk command
+    - jq command
   exclude_patterns:
     - architecture
     - security
@@ -29,6 +263,23 @@ signals:
     - refactor
     - multi-step
     - multi tenant
+    - at scale
+    - race condition
+    - distributed
+    - sort out
+    - figure out
+    - work out
+    - framework
+    - database schema
+    - system design
+    - performance tuning
+    - load testing
+    - complex
+    - tricky
+    - hard
+    - difficult
+    - untangle
+    - wrap my head around
   max_tokens: 4000
 notes:
   - Single-domain knowledge required.
