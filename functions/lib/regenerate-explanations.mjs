@@ -1,5 +1,7 @@
 import { Storage } from "@google-cloud/storage";
 import { GoogleGenAI } from "@google/genai";
+import { requireEnv } from "./config.mjs";
+import { getRequiredSecret } from "./secrets.mjs";
 
 const DEFAULT_TIER_COPY = {
   routine: {
@@ -73,10 +75,6 @@ function validateExplanation(text) {
 }
 
 async function generateText(prompt, apiKey) {
-  if (!apiKey) {
-    return "";
-  }
-
   const model = process.env.RIGHTMODEL_VERTEX_MODEL || "gemini-2.5-flash";
   const client = new GoogleGenAI({ apiKey });
   const response = await client.models.generateContent({
@@ -112,12 +110,9 @@ function cloneForProvider(provider, copy) {
   };
 }
 
-export async function regenerateExplanationCache({ apiKey } = {}) {
-  const bucketName = process.env.RIGHTMODEL_CACHE_BUCKET;
-
-  if (!bucketName) {
-    throw new Error("RIGHTMODEL_CACHE_BUCKET is required");
-  }
+export async function regenerateExplanationCache() {
+  const bucketName = requireEnv("RIGHTMODEL_CACHE_BUCKET");
+  const apiKey = await getRequiredSecret("GEMINI_API_KEY");
 
   const generatedAt = new Date().toISOString();
   const allTiers = structuredClone(DEFAULT_TIER_COPY);

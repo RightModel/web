@@ -1,10 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
+import { getRequiredSecret } from "./secrets.mjs";
 
-export async function runDeepAnalysis(payload, { apiKey } = {}) {
-  if (!apiKey) {
-    throw new Error("GEMINI_API_KEY is required");
-  }
-
+export async function runDeepAnalysis(payload) {
+  const apiKey = await getRequiredSecret("GEMINI_API_KEY");
   const taskDescription = payload.q || "";
   const matchedSignals = Array.isArray(payload.matchedSignals) ? payload.matchedSignals.join(", ") : "";
   const modelLabel = payload.model || "recommended model";

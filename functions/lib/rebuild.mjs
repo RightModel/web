@@ -1,10 +1,11 @@
-export async function triggerRepositoryDispatch({ token } = {}) {
-  const owner = process.env.RIGHTMODEL_GITHUB_OWNER;
-  const repo = process.env.RIGHTMODEL_GITHUB_REPO;
+import { logger } from "firebase-functions/v2";
+import { requireEnv } from "./config.mjs";
+import { getRequiredSecret } from "./secrets.mjs";
 
-  if (!owner || !repo || !token) {
-    throw new Error("GitHub dispatch credentials are required");
-  }
+export async function triggerRepositoryDispatch() {
+  const owner = requireEnv("RIGHTMODEL_GITHUB_OWNER");
+  const repo = requireEnv("RIGHTMODEL_GITHUB_REPO");
+  const token = await getRequiredSecret("RIGHTMODEL_GITHUB_TOKEN");
 
   const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/dispatches`, {
     method: "POST",
@@ -21,4 +22,6 @@ export async function triggerRepositoryDispatch({ token } = {}) {
   if (!response.ok) {
     throw new Error(`Dispatch failed with ${response.status}`);
   }
+
+  logger.info(`Triggered GitHub rebuild for ${owner}/${repo}.`);
 }
