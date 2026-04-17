@@ -6,6 +6,7 @@ export const siteDescription =
 export const defaultSiteUrl = "https://rightmodel.dev";
 
 export const navLinks = [
+  { href: "/for", label: "Tasks" },
   { href: "/models", label: "Models" },
   { href: "/methodology", label: "Methodology" },
   { href: "/about", label: "About" }
@@ -13,6 +14,7 @@ export const navLinks = [
 
 export const footerLinks = {
   primary: [
+    { href: "/for", label: "Task pages" },
     { href: "/methodology", label: "Methodology" },
     { href: "/changelog", label: "Changelog" },
     { href: "/models", label: "Models" }
@@ -65,6 +67,7 @@ export const changelogEntries = [
 
 export const pageDescriptions: Record<string, string> = {
   "/": siteDescription,
+  "/for": "Browse indexed task pages that recommend the right AI model for common coding, debugging, and architecture work.",
   "/about": "Why rightmodel exists, who built it and how to get in touch.",
   "/methodology": "How rightmodel classifies tasks, uses pricing data and where the recommendation can be wrong.",
   "/models": "Covered models, tier assignments and nightly pricing snapshots.",

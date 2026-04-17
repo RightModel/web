@@ -15,9 +15,24 @@ const commonTasks = commonTaskSlugs
   .filter((task): task is (typeof tasks)[number] => Boolean(task));
 ---
 
-<BaseLayout path="/" pageClass="pt-10 sm:pt-14">
+<BaseLayout title="Best AI model for coding tasks" path="/" pageClass="pt-10 sm:pt-14">
   <div data-home-app class="home-stage">
     <section class="space-y-8">
+      <section class="max-w-3xl space-y-4">
+        <h1 class="text-[2.5rem] font-semibold leading-[1.05] tracking-tight text-[color:var(--color-fg-default)] sm:text-[3.4rem]">
+          Find the best AI model for the coding task in front of you.
+        </h1>
+        <p class="max-w-2xl text-lg leading-8 text-[color:var(--color-fg-muted)]">
+          Paste a real developer task. rightmodel recommends the cheapest model tier that still fits
+          the reasoning load, with current pricing and no signup.
+        </p>
+        <p class="flex flex-wrap items-center gap-4 text-sm text-[color:var(--color-fg-muted)]">
+          <a class="link-quiet" href="/for">Browse task pages</a>
+          <a class="link-quiet" href="/models">See covered models</a>
+          <a class="link-quiet" href="/methodology">Read the methodology</a>
+        </p>
+      </section>
+
       <div class="home-input-shell">
         <label class="rm-visually-hidden" for="task-input">Task description</label>
         <textarea
@@ -137,7 +152,7 @@ const commonTasks = commonTaskSlugs
     <section class="home-common-tasks">
       <div class="mb-5 flex items-center justify-between gap-4">
         <h2 class="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--color-fg-muted)]">Common tasks</h2>
-        <a class="link-quiet text-sm" href="/models">View models</a>
+        <a class="link-quiet text-sm" href="/for">Browse all task pages</a>
       </div>
 
       <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">

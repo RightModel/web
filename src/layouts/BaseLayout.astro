@@ -3,6 +3,7 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import { getPricingCache } from "@/lib/data";
 import { defaultSiteUrl, pageDescriptions, siteDescription, siteTitle } from "@/lib/site";
+import { buildPageJsonLd, type JsonLdType } from "@/lib/seo";
 import "@/styles/global.css";
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
   pageWidth?: "default" | "wide";
   titleAbsolute?: boolean;
   ogImagePath?: string;
+  jsonLdType?: JsonLdType;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
   showHeaderNav?: boolean;
 }
@@ -25,6 +27,7 @@ const {
   pageWidth = "default",
   titleAbsolute = false,
   ogImagePath = "/og.png",
+  jsonLdType = "WebPage",
   jsonLd,
   showHeaderNav = path !== "/"
 } = Astro.props;
@@ -33,11 +36,20 @@ const canonical = new URL(path, siteUrl).toString();
 const pricing = getPricingCache();
 const pageTitle = title ? (titleAbsolute ? title : `${title} | ${siteTitle}`) : `${siteTitle} | Use the right model.`;
 const pageDescription = description || pageDescriptions[path] || siteDescription;
+const imageUrl = new URL(ogImagePath, siteUrl).toString();
 const verificationToken = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 const gaMeasurementId = import.meta.env.PUBLIC_GA4_MEASUREMENT_ID;
 const defaultJsonLd =
   path === "/"
-    ? {
+    ? [
+        buildPageJsonLd({
+          type: "WebSite",
+          title: pageTitle,
+          description: pageDescription,
+          canonical,
+          image: imageUrl
+        }),
+        {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
         applicationCategory: "DeveloperApplication",
@@ -50,9 +62,18 @@ const defaultJsonLd =
           price: "0",
           priceCurrency: "USD"
         }
-      }
-    : null;
-const jsonLdEntries = [...(defaultJsonLd ? [defaultJsonLd] : []), ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [])];
+        }
+      ]
+    : [
+        buildPageJsonLd({
+          type: jsonLdType,
+          title: pageTitle,
+          description: pageDescription,
+          canonical,
+          image: imageUrl
+        })
+      ];
+const jsonLdEntries = [...defaultJsonLd, ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [])];
 ---
 
 <!doctype html>
@@ -69,13 +90,14 @@ const jsonLdEntries = [...(defaultJsonLd ? [defaultJsonLd] : []), ...(jsonLd ? (
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDescription} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={new URL(ogImagePath, siteUrl).toString()} />
+    <meta property="og:image" content={imageUrl} />
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:title" content={pageTitle} />
     <meta property="twitter:description" content={pageDescription} />
-    <meta property="twitter:image" content={new URL(ogImagePath, siteUrl).toString()} />
+    <meta property="twitter:image" content={imageUrl} />
     {verificationToken && <meta name="google-site-verification" content={verificationToken} />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     {jsonLdEntries.map((entry) => (
       <script is:inline type="application/ld+json" set:html={JSON.stringify(entry)} />
     ))}

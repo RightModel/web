@@ -1,0 +1,82 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { sentenceCase } from "@/lib/format";
+import { buildCanonical, buildItemListJsonLd } from "@/lib/seo";
+import { tierOrder } from "@/lib/site";
+
+const tasks = (await getCollection("tasks"))
+  .map((entry) => entry.data)
+  .sort((left, right) => {
+    if (left.tier !== right.tier) {
+      return tierOrder.indexOf(left.tier) - tierOrder.indexOf(right.tier);
+    }
+
+    return left.title.localeCompare(right.title);
+  });
+
+const groupedTasks = tierOrder.map((tier) => ({
+  tier,
+  tasks: tasks.filter((task) => task.tier === tier)
+}));
+
+const title = "AI coding task pages";
+const description =
+  "Browse indexed task pages for common coding, debugging, review, and architecture work, each with a pricing-aware model recommendation.";
+const jsonLd = buildItemListJsonLd({
+  name: "rightmodel task pages",
+  description,
+  items: tasks.map((task) => ({
+    name: task.title,
+    item: buildCanonical(`/for/${task.slug}`)
+  }))
+});
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  path="/for"
+  pageWidth="wide"
+  pageClass="pt-10"
+  jsonLdType="CollectionPage"
+  jsonLd={jsonLd}
+>
+  <section class="space-y-4">
+    <h1 class="text-[2.25rem] font-semibold leading-tight tracking-tight text-[color:var(--color-fg-default)]">
+      AI coding task pages
+    </h1>
+    <p class="max-w-3xl text-lg leading-8 text-[color:var(--color-fg-muted)]">
+      These are the indexed content pages behind rightmodel. Each one maps a common developer task
+      to the model tier that best fits the reasoning load, then links you to adjacent tasks.
+    </p>
+    <p class="text-sm text-[color:var(--color-fg-muted)]">
+      Looking for the live free-form tool instead? Start on the <a href="/">homepage</a>.
+    </p>
+  </section>
+
+  <div class="mt-10 space-y-8">
+    {groupedTasks.map((group) => (
+      <section class="space-y-4">
+        <div class="flex items-center justify-between gap-4">
+          <h2 class="text-xl font-semibold text-[color:var(--color-fg-default)]">{sentenceCase(group.tier)}</h2>
+          <p class="text-sm text-[color:var(--color-fg-muted)]">{group.tasks.length} task pages</p>
+        </div>
+
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {group.tasks.map((task) => (
+            <a href={`/for/${task.slug}`} class="interactive-panel block p-5 text-[color:var(--color-fg-default)] no-underline">
+              <div class="flex items-start justify-between gap-3">
+                <h3 class="text-base font-semibold leading-6 tracking-tight">{task.title}</h3>
+                <span class="rounded-full bg-[color:var(--color-bg-subtle)] px-2 py-1 text-xs text-[color:var(--color-fg-muted)]">
+                  {sentenceCase(task.tier)}
+                </span>
+              </div>
+              <p class="mt-2 text-sm text-[color:var(--color-fg-muted)]">{task.description}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+</BaseLayout>

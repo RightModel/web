@@ -33,7 +33,7 @@ const representativeTasks = Object.entries(representativeTaskSlugsByTier).map(([
 }));
 ---
 
-<BaseLayout title="Covered models" path="/models" pageWidth="wide" pageClass="pt-10">
+<BaseLayout title="Covered models" path="/models" pageWidth="wide" pageClass="pt-10" jsonLdType="CollectionPage">
   <section class="space-y-3">
     <h1 class="text-[2rem] font-semibold leading-tight text-[color:var(--color-fg-default)]">Covered models</h1>
     <p class="text-base text-[color:var(--color-fg-muted)]">
@@ -42,6 +42,9 @@ const representativeTasks = Object.entries(representativeTaskSlugsByTier).map(([
     <p class="text-sm text-[color:var(--color-fg-muted)]">
       The default <strong>Any</strong> lane uses a curated shortlist from Anthropic, Google and
       OpenAI. The wider provider list below stays in view for pricing visibility and future mapping.
+    </p>
+    <p class="text-sm text-[color:var(--color-fg-muted)]">
+      Need example prompts instead of the raw catalog? Browse the indexed <a href="/for">task pages</a>.
     </p>
   </section>
 

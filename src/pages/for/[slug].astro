@@ -4,6 +4,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { buildRecommendationForTask, estimateCostPer1kCalls } from "@/lib/classifier";
 import { getExplanationCache, getPricingCache } from "@/lib/data";
 import { formatDate, formatMultiplier, formatUsd, formatUsdPerCall, sentenceCase } from "@/lib/format";
+import { buildBreadcrumbJsonLd, buildCanonical } from "@/lib/seo";
 import type { RecommendationResult } from "@/lib/types";
 
 function buildTaskPageDescription(taskTitle: string, recommendation: RecommendationResult) {
@@ -71,6 +72,12 @@ const faqJsonLd = {
     }
   ]
 };
+const canonical = buildCanonical(`/for/${task.slug}`);
+const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+  { name: "rightmodel", item: buildCanonical("/") },
+  { name: "Task pages", item: buildCanonical("/for") },
+  { name: task.title, item: canonical }
+]);
 const tierAnchor = `/models#${task.tier}`;
 const taskInput = task.description;
 ---
@@ -81,7 +88,7 @@ const taskInput = task.description;
   description={pageDescription}
   path={`/for/${task.slug}`}
   ogImagePath={`/og/tasks/${task.slug}.png`}
-  jsonLd={faqJsonLd}
+  jsonLd={[faqJsonLd, breadcrumbJsonLd]}
   pageClass="pt-10"
 >
   <nav aria-label="Breadcrumb" class="mb-6 text-sm text-[color:var(--color-fg-muted)]">
