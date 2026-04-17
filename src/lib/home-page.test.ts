@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { buildDeepAnalysisNote, buildDeepPromptMessage, hasDeepAnalysisResult, shouldShowDeepPrompt } from "@/lib/home-page";
+import {
+  buildDeepAnalysisNote,
+  buildDeepPromptMessage,
+  hasDeepAnalysisResult,
+  shouldHideDeepPrompt,
+  shouldShowDeepPrompt
+} from "@/lib/home-page";
 import type { RecommendationResult } from "@/lib/types";
 
 describe("home page deep analysis UI helpers", () => {
@@ -30,6 +36,22 @@ describe("home page deep analysis UI helpers", () => {
         deepAnalysisComplete: false
       })
     ).toBe(false);
+  });
+
+  it("maps deep-analysis CTA visibility to the DOM hidden flag without inversion", () => {
+    expect(
+      shouldHideDeepPrompt({
+        deepDismissed: false,
+        deepAnalysisComplete: false
+      })
+    ).toBe(false);
+
+    expect(
+      shouldHideDeepPrompt({
+        deepDismissed: false,
+        deepAnalysisComplete: true
+      })
+    ).toBe(true);
   });
 
   it("adjusts the deep-analysis prompt copy based on confidence", () => {

@@ -36,6 +36,10 @@ export function shouldShowDeepPrompt({
   return !deepAnalysisComplete && !deepDismissed;
 }
 
+export function shouldHideDeepPrompt(state: DeepPromptState) {
+  return !shouldShowDeepPrompt(state);
+}
+
 export function buildDeepPromptMessage(confidence: number) {
   const costDisclosure = "This will use approximately 500 tokens (~$0.00005). Proceed?";
 
@@ -256,7 +260,7 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
     stalePricing.textContent = `Pricing data may be outdated. Last refreshed: ${formatDate(recommendation.pricingRetrievedAt)}.`;
     renderCostDelta(recommendation);
     renderBreakdown(recommendation);
-    deepPrompt.hidden = shouldShowDeepPrompt({
+    deepPrompt.hidden = shouldHideDeepPrompt({
       deepDismissed,
       deepAnalysisComplete
     });
