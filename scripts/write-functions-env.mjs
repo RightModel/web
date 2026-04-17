@@ -9,14 +9,21 @@ if (!projectId) {
 }
 
 const requiredVars = [
-  "RIGHTMODEL_CACHE_BUCKET",
-  "RIGHTMODEL_GITHUB_OWNER",
-  "RIGHTMODEL_GITHUB_REPO",
-  "RIGHTMODEL_GITHUB_TOKEN",
-  "GEMINI_API_KEY"
+  "RIGHTMODEL_CACHE_BUCKET"
 ];
 
+const [derivedOwner = "", derivedRepo = ""] = (process.env.GITHUB_REPOSITORY || "").split("/", 2);
+const githubOwner = process.env.RIGHTMODEL_GITHUB_OWNER || process.env.GITHUB_REPOSITORY_OWNER || derivedOwner;
+const githubRepo = process.env.RIGHTMODEL_GITHUB_REPO || derivedRepo;
 const missing = requiredVars.filter((key) => !process.env[key]);
+
+if (!githubOwner) {
+  missing.push("RIGHTMODEL_GITHUB_OWNER (or GITHUB_REPOSITORY_OWNER)");
+}
+
+if (!githubRepo) {
+  missing.push("RIGHTMODEL_GITHUB_REPO (or GITHUB_REPOSITORY)");
+}
 
 if (missing.length > 0) {
   console.error(`Missing required functions env values: ${missing.join(", ")}`);
@@ -30,11 +37,9 @@ function quoteEnv(value) {
 const outputPath = resolve(process.cwd(), "functions", `.env.${projectId}`);
 const fileContents = [
   `RIGHTMODEL_CACHE_BUCKET=${quoteEnv(process.env.RIGHTMODEL_CACHE_BUCKET)}`,
-  `RIGHTMODEL_GITHUB_OWNER=${quoteEnv(process.env.RIGHTMODEL_GITHUB_OWNER)}`,
-  `RIGHTMODEL_GITHUB_REPO=${quoteEnv(process.env.RIGHTMODEL_GITHUB_REPO)}`,
-  `RIGHTMODEL_GITHUB_TOKEN=${quoteEnv(process.env.RIGHTMODEL_GITHUB_TOKEN)}`,
-  `RIGHTMODEL_VERTEX_MODEL=${quoteEnv(process.env.RIGHTMODEL_VERTEX_MODEL || "gemini-2.5-flash")}`,
-  `GEMINI_API_KEY=${quoteEnv(process.env.GEMINI_API_KEY)}`
+  `RIGHTMODEL_GITHUB_OWNER=${quoteEnv(githubOwner)}`,
+  `RIGHTMODEL_GITHUB_REPO=${quoteEnv(githubRepo)}`,
+  `RIGHTMODEL_VERTEX_MODEL=${quoteEnv(process.env.RIGHTMODEL_VERTEX_MODEL || "gemini-2.5-flash")}`
 ].join("\n");
 
 await mkdir(resolve(process.cwd(), "functions"), { recursive: true });

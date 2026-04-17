@@ -1,8 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 
-export async function runDeepAnalysis(payload) {
-  const apiKey = process.env.GEMINI_API_KEY;
-
+export async function runDeepAnalysis(payload, { apiKey } = {}) {
   if (!apiKey) {
     throw new Error("GEMINI_API_KEY is required");
   }

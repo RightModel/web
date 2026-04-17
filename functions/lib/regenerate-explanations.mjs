@@ -72,9 +72,7 @@ function validateExplanation(text) {
   );
 }
 
-async function generateText(prompt) {
-  const apiKey = process.env.GEMINI_API_KEY;
-
+async function generateText(prompt, apiKey) {
   if (!apiKey) {
     return "";
   }
@@ -93,7 +91,7 @@ async function generateText(prompt) {
   return response.text || "";
 }
 
-async function generateTierExplanation(tier) {
+async function generateTierExplanation(tier, apiKey) {
   const config = PROMPT_CONFIG[tier];
   const prompt = `You are writing concise explanation copy for rightmodel.dev.
 
@@ -102,7 +100,7 @@ Recommended models: ${config.recommended}
 Overkill model: ${config.overkill}
 
 Write exactly 2 to 3 sentences. Explain why this task class fits the recommended tier and why the larger option adds cost without enough benefit. Avoid marketing language and avoid hedging.`;
-  const generated = await generateText(prompt);
+  const generated = await generateText(prompt, apiKey);
 
   return validateExplanation(generated) ? generated : "";
 }
@@ -114,7 +112,7 @@ function cloneForProvider(provider, copy) {
   };
 }
 
-export async function regenerateExplanationCache() {
+export async function regenerateExplanationCache({ apiKey } = {}) {
   const bucketName = process.env.RIGHTMODEL_CACHE_BUCKET;
 
   if (!bucketName) {
@@ -125,7 +123,7 @@ export async function regenerateExplanationCache() {
   const allTiers = structuredClone(DEFAULT_TIER_COPY);
 
   for (const tier of Object.keys(DEFAULT_TIER_COPY)) {
-    const generated = await generateTierExplanation(tier);
+    const generated = await generateTierExplanation(tier, apiKey);
 
     if (generated) {
       allTiers[tier].explanation = generated;

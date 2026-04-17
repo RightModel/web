@@ -1,7 +1,6 @@
-export async function triggerRepositoryDispatch() {
+export async function triggerRepositoryDispatch({ token } = {}) {
   const owner = process.env.RIGHTMODEL_GITHUB_OWNER;
   const repo = process.env.RIGHTMODEL_GITHUB_REPO;
-  const token = process.env.RIGHTMODEL_GITHUB_TOKEN;
 
   if (!owner || !repo || !token) {
     throw new Error("GitHub dispatch credentials are required");
