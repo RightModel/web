@@ -1,10 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  buildRecommendation,
-  buildRecommendationForTask,
-  buildRecommendationFromTier,
-  classifyTask
-} from "@/lib/classifier";
+import { buildRecommendation, buildRecommendationForTask, classifyTask } from "@/lib/classifier";
 import { getExplanationCache, getPricingCache } from "@/lib/data";
 import { loadRulesFromFiles } from "@/lib/load-rules-from-files";
 
@@ -115,21 +110,5 @@ describe("classifier", async () => {
     expect(result).not.toBeNull();
     expect(result?.tier).toBe("deep");
     expect(result?.modelSlug).toBe("google/gemini-3.1-pro-preview");
-  });
-
-  it("builds a recommendation from a deep-analysis tier override", () => {
-    const result = buildRecommendationFromTier({
-      input: "create an operating system from scratch",
-      provider: "all",
-      tier: "deep",
-      matchedSignals: ["architecture-level ambiguity"],
-      rules,
-      pricing,
-      explanations
-    });
-
-    expect(result).not.toBeNull();
-    expect(result?.tier).toBe("deep");
-    expect(result?.matchedSignals).toContain("architecture-level ambiguity");
   });
 });

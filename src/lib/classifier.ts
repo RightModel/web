@@ -369,39 +369,6 @@ export function buildRecommendation(params: {
   });
 }
 
-export function buildRecommendationFromTier(params: {
-  input: string;
-  provider: Provider;
-  tier: Tier;
-  rules: TierRule[];
-  pricing: PricingCache;
-  explanations: ExplanationCache;
-  matchedSignals?: string[];
-  confidence?: number;
-}) {
-  const { input, provider, tier, rules, pricing, explanations, matchedSignals, confidence = 1 } = params;
-
-  if (!input.trim()) {
-    return null;
-  }
-
-  const classification = classifyTask(input, rules);
-
-  return finalizeRecommendation({
-    input,
-    provider,
-    tier,
-    classification: {
-      ...classification,
-      confidence,
-      matchedSignals: matchedSignals && matchedSignals.length > 0 ? matchedSignals : classification.matchedSignals,
-      explanationKey: tier === classification.tier ? classification.explanationKey : `deep-${tier}`
-    },
-    pricing,
-    explanations
-  });
-}
-
 export function buildRecommendationForTask(params: {
   task: TaskArchetype;
   provider?: Provider;
