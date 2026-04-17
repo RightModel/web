@@ -8,17 +8,19 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "npm run fetch:caches && npm run validate:content && npm run generate:og && astro build",
+    "build": "npm run fetch:caches && npm run sync:tier-mapping && npm run validate:content && npm run generate:og && astro build",
     "preview": "astro preview",
     "lint": "astro check && tsc --noEmit",
     "test": "vitest run",
     "test:classifier": "vitest run src/lib/classifier.test.ts",
     "validate:rules": "node scripts/validate-rules.mjs",
     "validate:tasks": "node scripts/validate-tasks.mjs",
-    "validate:content": "npm run validate:rules && npm run validate:tasks",
+    "validate:tier-mapping": "node scripts/validate-tier-mapping.mjs",
+    "validate:content": "npm run validate:rules && npm run validate:tasks && npm run validate:tier-mapping",
     "fetch:caches": "node scripts/fetch-caches.mjs",
     "generate:og": "node scripts/generate-og.mjs",
-    "write:functions-env": "node scripts/write-functions-env.mjs"
+    "write:functions-env": "node scripts/write-functions-env.mjs",
+    "sync:tier-mapping": "node scripts/sync-tier-mapping.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",

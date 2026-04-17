@@ -6,19 +6,12 @@ interface HomePageOptions {
   rules: TierRule[];
   pricing: PricingCache;
   explanations: ExplanationCache;
-  placeholders: string[];
   deepAnalysisEndpoint?: string;
 }
 
-type DeepStatus = "idle" | "confirm" | "loading" | "error";
+type DeepStatus = "idle" | "loading" | "error";
 
-export function setupHomePage({
-  rules,
-  pricing,
-  explanations,
-  placeholders,
-  deepAnalysisEndpoint
-}: HomePageOptions) {
+export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoint }: HomePageOptions) {
   const root = document.querySelector<HTMLElement>("[data-home-app]");
 
   if (!root) {
@@ -28,11 +21,9 @@ export function setupHomePage({
   const input = root.querySelector<HTMLTextAreaElement>("[data-task-input]")!;
   const providerButtons = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-provider]"));
   const output = root.querySelector<HTMLElement>("[data-output]")!;
-  const emptyState = root.querySelector<HTMLElement>("[data-empty-state]")!;
   const outputCard = root.querySelector<HTMLElement>("[data-output-card]")!;
+  const secondaryControls = root.querySelector<HTMLElement>("[data-secondary-controls]")!;
   const modelName = root.querySelector<HTMLElement>("[data-model-name]")!;
-  const modelSlug = root.querySelector<HTMLElement>("[data-model-slug]")!;
-  const modelProvider = root.querySelector<HTMLElement>("[data-model-provider]")!;
   const overkillNote = root.querySelector<HTMLElement>("[data-overkill-note]")!;
   const costDelta = root.querySelector<HTMLElement>("[data-cost-delta]")!;
   const shortInputNote = root.querySelector<HTMLElement>("[data-short-input-note]")!;
@@ -51,7 +42,6 @@ export function setupHomePage({
   const deepCancel = root.querySelector<HTMLButtonElement>("[data-deep-cancel]")!;
   const deepProgress = root.querySelector<HTMLElement>("[data-deep-progress]")!;
 
-  let placeholderIndex = 0;
   let renderTimer: number | undefined;
   let deepStatus: DeepStatus = "idle";
   let deepDismissed = false;
@@ -106,33 +96,29 @@ export function setupHomePage({
   function renderBreakdown(recommendation: RecommendationResult) {
     const rows = [
       {
-        label: recommendation.model.label,
         slug: recommendation.modelSlug,
-        provider: recommendation.modelProvider,
         model: recommendation.model
       }
     ];
 
-    if (recommendation.defaultReachModel && recommendation.defaultReachSlug && recommendation.defaultReachProvider) {
+    if (recommendation.defaultReachModel && recommendation.defaultReachSlug) {
       rows.push({
-        label: recommendation.defaultReachModel.label,
         slug: recommendation.defaultReachSlug,
-        provider: recommendation.defaultReachProvider,
         model: recommendation.defaultReachModel
       });
     }
 
     breakdown.innerHTML = rows
       .map((row) => {
-        const estimated = estimateCostPer1kCalls(row.model, row.model.tier);
+        const estimated = estimateCostPer1kCalls(row.model, recommendation.tier);
 
         return `
           <tr>
             <td>
-              <div class="font-semibold">${row.label}</div>
+              <div class="font-semibold">${row.model.label}</div>
               <div class="rm-code text-sm text-[color:var(--color-fg-muted)]">${row.slug}</div>
             </td>
-            <td class="text-sm">${sentenceCase(row.provider)}</td>
+            <td class="text-sm">${sentenceCase(row.model.provider)}</td>
             <td class="text-sm">${sentenceCase(row.model.tier)}</td>
             <td class="rm-code text-sm">${formatUsd(row.model.input_cost_per_1k_tokens_usd)}</td>
             <td class="rm-code text-sm">${formatUsd(row.model.output_cost_per_1k_tokens_usd)}</td>
@@ -145,7 +131,7 @@ export function setupHomePage({
 
   function renderCostDelta(recommendation: RecommendationResult) {
     if (!recommendation.costMultiplier || !recommendation.costComparisonDirection) {
-      costDelta.textContent = "Pricing snapshot loaded.";
+      costDelta.textContent = "Cost delta unavailable for this provider choice.";
       return;
     }
 
@@ -170,26 +156,22 @@ export function setupHomePage({
 
     if (!recommendation) {
       output.hidden = true;
-      emptyState.hidden = false;
+      secondaryControls.hidden = true;
       deepPrompt.hidden = true;
       copyStatus.textContent = "";
       return;
     }
 
-    emptyState.hidden = true;
     output.hidden = false;
+    secondaryControls.hidden = false;
     outputCard.dataset.tier = recommendation.tier;
-    modelName.textContent = `Use ${recommendation.model.label}.`;
-    modelSlug.textContent = recommendation.modelSlug;
-    modelProvider.textContent = sentenceCase(recommendation.modelProvider);
+    modelName.textContent = `Use ${recommendation.model.label} (${recommendation.modelSlug}).`;
     overkillNote.textContent =
       recommendation.defaultReachModel && recommendation.costComparisonDirection === "cheaper"
         ? `${recommendation.defaultReachModel.label} is overkill here.`
         : recommendation.explanation.overkill_note.replace(/^./, (char) => char.toUpperCase());
     whyText.textContent = state.deep && state.deepExplanation ? state.deepExplanation : recommendation.explanation.explanation;
-    signalsList.innerHTML = recommendation.matchedSignals
-      .map((signal) => `<li>${signal}</li>`)
-      .join("");
+    signalsList.innerHTML = recommendation.matchedSignals.map((signal) => `<li>${signal}</li>`).join("");
     sourcesDate.textContent = formatDate(recommendation.pricingRetrievedAt);
     shortInputNote.hidden = !recommendation.shortInputNotice;
     shortInputNote.textContent = recommendation.shortInputNotice || "";
@@ -202,8 +184,8 @@ export function setupHomePage({
     deepPrompt.hidden = recommendation.confidence >= 0.6 || deepDismissed;
     deepMessage.textContent =
       deepStatus === "error"
-        ? "Deep analysis unavailable. Showing heuristic result."
-        : "This will use approximately 500 tokens (~$0.00005). Proceed?";
+        ? "Deep analysis is unavailable right now. Showing the heuristic recommendation."
+        : "Not sure? Run deep analysis. This uses about 500 tokens (~$0.00005) before it fires.";
     deepProgress.hidden = deepStatus !== "loading";
     whyPanel.open = false;
   }
@@ -292,19 +274,8 @@ export function setupHomePage({
     }, 1800);
   }
 
-  function rotatePlaceholder() {
-    if (document.activeElement === input || input.value) {
-      return;
-    }
-
-    placeholderIndex = (placeholderIndex + 1) % placeholders.length;
-    input.placeholder = placeholders[placeholderIndex];
-  }
-
   hydrateFromUrl();
-  input.placeholder = state.q || placeholders[0];
   renderRecommendation();
-  window.setInterval(rotatePlaceholder, 4000);
 
   if (state.deep && state.q) {
     void runDeepAnalysis();

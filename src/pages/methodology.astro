@@ -13,7 +13,7 @@ const pricing = getPricingCache();
     <h1>Methodology</h1>
     <p>
       The classifier matches task descriptions against an open ruleset. It looks for force patterns,
-      signal verbs, signal phrases, and exclusion phrases, then chooses between routine, moderate, and
+      signal verbs, signal phrases and exclusion phrases, then chooses between routine, moderate and
       deep reasoning tiers.
     </p>
     <p>
@@ -45,14 +45,31 @@ const pricing = getPricingCache();
 
     <h2>Pricing data</h2>
     <p>
-      Pricing is refreshed nightly from public provider pricing pages and bundled into the static build.
+      Pricing is refreshed nightly from the OpenRouter model catalog and bundled into the static build.
       The current snapshot was retrieved on {formatDate(pricing.retrieved_at)}. Costs are shown in USD
-      and estimated from average prompt and completion sizes.
+      and estimated from average prompt and completion sizes for each task tier.
     </p>
+    <p>
+      The default <strong>Any</strong> lane uses a curated shortlist from Anthropic, Google and OpenAI.
+      Broader provider coverage still appears in the catalog, but the default recommendation avoids
+      sending most users to a niche provider just because it is the cheapest line item in the cache.
+    </p>
+    <p>
+      The provider choice is visible before the first recommendation. Many developers already have
+      access to one or two model families, so the first answer should respect that constraint rather
+      than asking them to correct it after the fact.
+    </p>
+
+    <h2>What does not happen at runtime</h2>
+    <ul>
+      <li>No OpenRouter pricing calls on the heuristic path</li>
+      <li>No Gemini call unless you explicitly opt into deep analysis</li>
+      <li>No stored history or browser-side session cache</li>
+    </ul>
 
     <h2>Wrong recommendation?</h2>
     <p>
-      Open an issue with the task description, the recommendation you saw, and the model you think
+      Open an issue with the task description, the recommendation you saw and the model you think
       should have been selected. Signal patterns are reviewed manually before merging.
     </p>
   </article>

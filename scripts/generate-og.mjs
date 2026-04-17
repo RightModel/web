@@ -17,7 +17,7 @@ const svg = `
   <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" fill="#1f2030">
     <text x="92" y="128" font-size="42" font-weight="600">rightmodel</text>
     <text x="92" y="278" font-size="64" font-weight="600">Use the right model.</text>
-    <text x="92" y="350" font-size="34" fill="#52566a">Paste your task. Get a recommendation in 2 seconds.</text>
+    <text x="92" y="350" font-size="34" fill="#52566a">Paste your task. Get the right model in two seconds.</text>
     <text x="${width - 92}" y="${height - 92}" text-anchor="end" font-size="24" fill="#676b80">rightmodel.dev</text>
   </g>
 </svg>`;
@@ -114,11 +114,9 @@ function getAverageCallCost(model, tier) {
 }
 
 function getModelCandidates(pricing, tier) {
-  return Object.entries(pricing.models).flatMap(([provider, models]) =>
-    Object.entries(models)
-      .filter(([, model]) => model.tier === tier)
-      .map(([slug, model]) => ({ provider, slug, model }))
-  );
+  return Object.entries(pricing.models)
+    .filter(([, model]) => model.tier === tier)
+    .map(([slug, model]) => ({ provider: model.provider, slug, model }));
 }
 
 function getRecommendationForTier(pricing, tier) {

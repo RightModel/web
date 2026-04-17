@@ -1,4 +1,5 @@
 export type Tier = "routine" | "moderate" | "deep";
+export type ModelTier = Tier | "unknown";
 export type Provider = "all" | "anthropic" | "google" | "openai";
 export type ProviderName = Exclude<Provider, "all">;
 
@@ -35,16 +36,18 @@ export interface TaskArchetype {
 }
 
 export interface ModelInfo {
-  tier: Tier;
+  tier: ModelTier;
   label: string;
+  provider: string;
   input_cost_per_1k_tokens_usd: number;
   output_cost_per_1k_tokens_usd: number;
   context_window_k: number;
 }
 
-export type PricingModels = Record<ProviderName, Record<string, ModelInfo>>;
+export type PricingModels = Record<string, ModelInfo>;
 
 export interface PricingCache {
+  source?: string;
   retrieved_at: string;
   models: PricingModels;
 }
@@ -73,10 +76,10 @@ export interface RecommendationResult extends ClassifierResult {
   provider: Provider;
   modelSlug: string;
   model: ModelInfo;
-  modelProvider: ProviderName;
+  modelProvider: string;
   defaultReachSlug: string | null;
   defaultReachModel: ModelInfo | null;
-  defaultReachProvider: ProviderName | null;
+  defaultReachProvider: string | null;
   costMultiplier: number | null;
   costDeltaPer1kTokensUsd: number | null;
   costEstimatePerCallUsd: number | null;

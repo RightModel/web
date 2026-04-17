@@ -5,7 +5,6 @@ import type {
   ModelInfo,
   PricingCache,
   Provider,
-  ProviderName,
   RecommendationResult,
   TaskArchetype,
   Tier,
@@ -13,6 +12,34 @@ import type {
 } from "@/lib/types";
 
 const TIER_ORDER: Tier[] = ["routine", "moderate", "deep"];
+const MAINSTREAM_PROVIDERS = new Set(["anthropic", "google", "openai"]);
+const CURATED_DEFAULT_SLUGS_BY_TIER: Record<Tier, string[]> = {
+  routine: [
+    "google/gemini-2.0-flash-001",
+    "openai/gpt-4o-mini",
+    "openai/gpt-4.1-mini",
+    "anthropic/claude-3.5-haiku",
+    "anthropic/claude-haiku-4.5"
+  ],
+  moderate: [
+    "openai/gpt-5-mini",
+    "openai/gpt-4.1",
+    "openai/gpt-4o",
+    "google/gemini-2.5-pro",
+    "anthropic/claude-sonnet-4.6",
+    "anthropic/claude-sonnet-4.5",
+    "anthropic/claude-sonnet-4"
+  ],
+  deep: [
+    "openai/o3",
+    "openai/gpt-5",
+    "openai/gpt-5.4",
+    "google/gemini-3.1-pro-preview",
+    "anthropic/claude-opus-4.7",
+    "anthropic/claude-opus-4.6",
+    "anthropic/claude-opus-4.5"
+  ]
+};
 
 const AVERAGE_CALL_TOKENS: Record<Tier, { input: number; output: number }> = {
   routine: { input: 500, output: 250 },
@@ -21,14 +48,17 @@ const AVERAGE_CALL_TOKENS: Record<Tier, { input: number; output: number }> = {
 };
 
 interface CandidateModel {
-  provider: ProviderName;
   slug: string;
-  model: ModelInfo;
+  model: ModelInfo & { tier: Tier };
 }
 
 interface ScoreDetail {
   score: number;
   signals: string[];
+}
+
+function isKnownTier(value: string): value is Tier {
+  return value === "routine" || value === "moderate" || value === "deep";
 }
 
 export function normaliseInput(input: string) {
@@ -156,30 +186,36 @@ function getAverageCallCost(model: ModelInfo, tier: Tier) {
 }
 
 function getCandidates(pricing: PricingCache, provider: Provider, tier?: Tier): CandidateModel[] {
-  const providers = provider === "all" ? (Object.keys(pricing.models) as ProviderName[]) : [provider];
-  const candidates: CandidateModel[] = [];
+  const candidates = Object.entries(pricing.models)
+    .filter(([, model]) => isKnownTier(model.tier))
+    .filter(([, model]) => !tier || model.tier === tier)
+    .map(([slug, model]) => ({
+      slug,
+      model: model as ModelInfo & { tier: Tier }
+    }));
 
-  for (const providerName of providers) {
-    const models = pricing.models[providerName] || {};
-
-    for (const [slug, model] of Object.entries(models)) {
-      if (!tier || model.tier === tier) {
-        candidates.push({
-          provider: providerName,
-          slug,
-          model
-        });
-      }
-    }
+  if (provider !== "all") {
+    return candidates.filter((candidate) => candidate.model.provider === provider);
   }
 
-  return candidates;
+  if (!tier) {
+    return candidates.filter((candidate) => MAINSTREAM_PROVIDERS.has(candidate.model.provider));
+  }
+
+  const curatedSlugs = new Set(CURATED_DEFAULT_SLUGS_BY_TIER[tier]);
+  const curatedCandidates = candidates.filter((candidate) => curatedSlugs.has(candidate.slug));
+
+  if (curatedCandidates.length > 0) {
+    return curatedCandidates;
+  }
+
+  return candidates.filter((candidate) => MAINSTREAM_PROVIDERS.has(candidate.model.provider));
 }
 
-function sortCandidates(candidates: CandidateModel[], preferredTier: Tier) {
+function sortCandidates(candidates: CandidateModel[], taskTier: Tier) {
   return [...candidates].sort((left, right) => {
-    const leftCost = getAverageCallCost(left.model, preferredTier);
-    const rightCost = getAverageCallCost(right.model, preferredTier);
+    const leftCost = getAverageCallCost(left.model, taskTier);
+    const rightCost = getAverageCallCost(right.model, taskTier);
 
     if (leftCost !== rightCost) {
       return leftCost - rightCost;
@@ -214,15 +250,19 @@ function pickCandidateForTier(
       return leftDistance - rightDistance;
     }
 
-    return getAverageCallCost(left.model, left.model.tier) - getAverageCallCost(right.model, right.model.tier);
+    return getAverageCallCost(left.model, tier) - getAverageCallCost(right.model, tier);
   })[0];
+
+  if (!closest) {
+    throw new Error(`No covered models are available for provider filter "${provider}".`);
+  }
 
   return {
     candidate: closest,
     providerConstraintNote:
       provider === "all"
         ? null
-        : `This provider filter does not have a covered ${tier} tier, so this is the closest fit inside ${provider}.`
+        : `Your current provider does not have a covered ${tier} tier, so this is the closest fit inside ${provider}.`
   };
 }
 
@@ -238,6 +278,21 @@ function pickComparisonTier(tier: Tier): Tier | null {
   return "moderate";
 }
 
+function pickComparisonCandidate(pricing: PricingCache, provider: Provider, tier: Tier): CandidateModel | null {
+  const filteredCandidates = sortCandidates(getCandidates(pricing, provider, tier), tier);
+
+  if (filteredCandidates.length > 0) {
+    return filteredCandidates[0];
+  }
+
+  if (provider !== "all") {
+    const crossProviderCandidates = sortCandidates(getCandidates(pricing, "all", tier), tier);
+    return crossProviderCandidates[0] || null;
+  }
+
+  return null;
+}
+
 function finalizeRecommendation(params: {
   input: string;
   provider: Provider;
@@ -248,15 +303,14 @@ function finalizeRecommendation(params: {
 }) {
   const { input, provider, tier, classification, pricing, explanations } = params;
   const selected = pickCandidateForTier(pricing, provider, tier);
-  const comparisonTier = pickComparisonTier(selected.candidate.model.tier);
-  const comparison = comparisonTier
-    ? pickCandidateForTier(pricing, provider, comparisonTier)
-    : null;
-
-  const recommendedCost = getAverageCallCost(selected.candidate.model, selected.candidate.model.tier);
-  const comparisonCost = comparison ? getAverageCallCost(comparison.candidate.model, comparison.candidate.model.tier) : null;
+  const comparisonTier = pickComparisonTier(tier);
+  const comparison = comparisonTier ? pickComparisonCandidate(pricing, provider, comparisonTier) : null;
+  const recommendedCost = getAverageCallCost(selected.candidate.model, tier);
+  const comparisonCost = comparison ? getAverageCallCost(comparison.model, comparison.model.tier) : null;
   const costMultiplier =
-    comparisonCost && recommendedCost > 0 ? Math.max(recommendedCost, comparisonCost) / Math.min(recommendedCost, comparisonCost) : null;
+    comparisonCost && recommendedCost > 0
+      ? Math.max(recommendedCost, comparisonCost) / Math.min(recommendedCost, comparisonCost)
+      : null;
   const costComparisonDirection =
     comparisonCost && recommendedCost !== comparisonCost
       ? recommendedCost < comparisonCost
@@ -267,7 +321,7 @@ function finalizeRecommendation(params: {
   const explanation = getExplanationEntry(explanations, provider, tier);
   const shortInputNotice =
     tokens.length > 0 && tokens.length < 20
-      ? "Got a large codebase attached? Mention it - context size can shift this recommendation."
+      ? "Got a large codebase attached? That context may shift this. Paste a fuller description for a better result."
       : null;
 
   return {
@@ -276,10 +330,10 @@ function finalizeRecommendation(params: {
     provider,
     modelSlug: selected.candidate.slug,
     model: selected.candidate.model,
-    modelProvider: selected.candidate.provider,
-    defaultReachSlug: comparison?.candidate.slug || null,
-    defaultReachModel: comparison?.candidate.model || null,
-    defaultReachProvider: comparison?.candidate.provider || null,
+    modelProvider: selected.candidate.model.provider,
+    defaultReachSlug: comparison?.slug || null,
+    defaultReachModel: comparison?.model || null,
+    defaultReachProvider: comparison?.model.provider || null,
     costMultiplier,
     costDeltaPer1kTokensUsd: comparisonCost === null ? null : comparisonCost - recommendedCost,
     costEstimatePerCallUsd: recommendedCost,
@@ -341,5 +395,6 @@ export function buildRecommendationForTask(params: {
 }
 
 export function estimateCostPer1kCalls(model: ModelInfo, tier: Tier) {
-  return getAverageCallCost(model, tier) * 1000;
+  const resolvedTier = isKnownTier(model.tier) ? model.tier : tier;
+  return getAverageCallCost(model, resolvedTier) * 1000;
 }

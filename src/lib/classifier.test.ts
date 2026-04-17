@@ -36,7 +36,7 @@ describe("classifier", async () => {
 
     expect(result).not.toBeNull();
     expect(result?.tier).toBe("routine");
-    expect(result?.modelSlug).toBe("gemini-flash-2-0");
+    expect(result?.modelSlug).toBe("google/gemini-2.0-flash-001");
     expect(result?.costComparisonDirection).toBe("cheaper");
   });
 
@@ -67,6 +67,48 @@ describe("classifier", async () => {
     });
 
     expect(result.tier).toBe("deep");
-    expect(result.modelSlug).toBe("claude-opus-4");
+    expect(result.modelSlug).toBe("openai/o3");
+  });
+
+  it("uses the curated best-value lane for all-provider moderate picks", () => {
+    const result = buildRecommendation({
+      input: "refactor this React component to use hooks",
+      provider: "all",
+      rules,
+      pricing,
+      explanations
+    });
+
+    expect(result).not.toBeNull();
+    expect(result?.tier).toBe("moderate");
+    expect(result?.modelSlug).toBe("openai/gpt-5-mini");
+  });
+
+  it("uses the expanded OpenAI moderate pool when filtered", () => {
+    const result = buildRecommendation({
+      input: "refactor this React component to use hooks",
+      provider: "openai",
+      rules,
+      pricing,
+      explanations
+    });
+
+    expect(result).not.toBeNull();
+    expect(result?.tier).toBe("moderate");
+    expect(result?.modelSlug).toBe("openai/gpt-5-mini");
+  });
+
+  it("gives Google a deep-tier option after the mapping expansion", () => {
+    const result = buildRecommendation({
+      input: "design a database schema for a multi-tenant SaaS",
+      provider: "google",
+      rules,
+      pricing,
+      explanations
+    });
+
+    expect(result).not.toBeNull();
+    expect(result?.tier).toBe("deep");
+    expect(result?.modelSlug).toBe("google/gemini-3.1-pro-preview");
   });
 });

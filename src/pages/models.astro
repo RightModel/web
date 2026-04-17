@@ -7,21 +7,23 @@ import { representativeTaskSlugsByTier } from "@/lib/tasks";
 
 const pricing = getPricingCache();
 const tasks = (await getCollection("tasks")).map((entry) => entry.data);
+const tierOrder = { routine: 0, moderate: 1, deep: 2 };
 const rows = Object.entries(pricing.models)
-  .flatMap(([provider, models]) =>
-    Object.entries(models).map(([slug, model]) => ({
-      provider,
-      slug,
-      ...model
-    }))
-  )
+  .filter(([, model]) => model.tier !== "unknown")
+  .map(([slug, model]) => ({
+    slug,
+    ...model
+  }))
   .sort((left, right) => {
     if (left.provider !== right.provider) {
       return left.provider.localeCompare(right.provider);
     }
 
-    const order = { routine: 0, moderate: 1, deep: 2 };
-    return order[left.tier] - order[right.tier];
+    if (left.tier !== right.tier) {
+      return tierOrder[left.tier as keyof typeof tierOrder] - tierOrder[right.tier as keyof typeof tierOrder];
+    }
+
+    return left.slug.localeCompare(right.slug);
   });
 const representativeTasks = Object.entries(representativeTaskSlugsByTier).map(([tier, slugs]) => ({
   tier,
@@ -35,7 +37,11 @@ const representativeTasks = Object.entries(representativeTaskSlugsByTier).map(([
   <section class="space-y-3">
     <h1 class="text-[2rem] font-semibold leading-tight text-[color:var(--color-fg-default)]">Covered models</h1>
     <p class="text-base text-[color:var(--color-fg-muted)]">
-      Pricing refreshed nightly from provider sources. Last updated: {formatDate(pricing.retrieved_at)}.
+      Pricing refreshed nightly from the OpenRouter model catalog. Last updated: {formatDate(pricing.retrieved_at)}.
+    </p>
+    <p class="text-sm text-[color:var(--color-fg-muted)]">
+      The default <strong>Any</strong> lane uses a curated shortlist from Anthropic, Google and
+      OpenAI. The wider provider list below stays in view for pricing visibility and future mapping.
     </p>
   </section>
 

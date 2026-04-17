@@ -4,6 +4,22 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { buildRecommendationForTask, estimateCostPer1kCalls } from "@/lib/classifier";
 import { getExplanationCache, getPricingCache } from "@/lib/data";
 import { formatDate, formatMultiplier, formatUsd, formatUsdPerCall, sentenceCase } from "@/lib/format";
+import type { RecommendationResult } from "@/lib/types";
+
+function buildTaskPageDescription(taskTitle: string, recommendation: RecommendationResult) {
+  const lead = `${taskTitle}: use ${recommendation.model.label}.`;
+
+  if (!recommendation.defaultReachModel || !recommendation.costComparisonDirection) {
+    return lead;
+  }
+
+  if (recommendation.costComparisonDirection === "cheaper") {
+    const multiplierText = recommendation.costMultiplier ? `${formatMultiplier(recommendation.costMultiplier)} ` : "";
+    return `${lead} ${recommendation.defaultReachModel.label} is ${multiplierText}pricier here.`;
+  }
+
+  return `${lead} ${recommendation.defaultReachModel.label} is cheaper, but paying up is worth it here.`;
+}
 
 export async function getStaticPaths() {
   const tasks = await getCollection("tasks");
@@ -25,6 +41,7 @@ const recommendation = buildRecommendationForTask({
   pricing,
   explanations
 });
+const pageDescription = buildTaskPageDescription(task.title, recommendation);
 const relatedTasks = task.related_slugs
   .map((slug) => tasks.find((entry) => entry.slug === slug))
   .filter((entry): entry is (typeof tasks)[number] => Boolean(entry))
@@ -49,7 +66,7 @@ const faqJsonLd = {
         text:
           recommendation.costComparisonDirection === "cheaper" && recommendation.defaultReachModel
             ? `Use ${recommendation.model.label} (${recommendation.modelSlug}). ${recommendation.defaultReachModel.label} is overkill here and costs ${formatMultiplier(recommendation.costMultiplier || 1)} more per run.`
-            : `Use ${recommendation.model.label} (${recommendation.modelSlug}). It costs more than ${recommendation.defaultReachModel?.label || "the next tier down"}, and this is one of the few cases where the extra spend is justified.`
+            : `Use ${recommendation.model.label} (${recommendation.modelSlug}). Paying up is justified here because the deeper model handles the extra reasoning load more reliably.`
       }
     }
   ]
@@ -61,7 +78,7 @@ const taskInput = task.description;
 <BaseLayout
   title={task.seo.title_tag}
   titleAbsolute={true}
-  description={task.seo.meta_description}
+  description={pageDescription}
   path={`/for/${task.slug}`}
   ogImagePath={`/og/tasks/${task.slug}.png`}
   jsonLd={faqJsonLd}
@@ -82,14 +99,8 @@ const taskInput = task.description;
       <div class="flex flex-wrap items-start justify-between gap-4">
         <div class="space-y-2">
           <h2 class="text-[2.5rem] font-semibold leading-[1.1] text-[color:var(--color-fg-default)]">
-            Use {recommendation.model.label}.
+            Use {recommendation.model.label} ({recommendation.modelSlug}).
           </h2>
-          <div class="flex flex-wrap items-center gap-3 text-sm text-[color:var(--color-fg-muted)]">
-            <span class="rounded-full bg-[color:var(--color-bg-subtle)] px-2 py-1">
-              {sentenceCase(recommendation.modelProvider)}
-            </span>
-            <code class="rm-code text-sm">{recommendation.modelSlug}</code>
-          </div>
         </div>
         <button
           type="button"
@@ -129,7 +140,7 @@ const taskInput = task.description;
     </div>
 
     <details class="rm-panel p-5">
-      <summary class="cursor-pointer text-sm font-medium text-[color:var(--color-accent)]">Why →</summary>
+      <summary class="cursor-pointer text-sm font-medium text-[color:var(--color-accent)]">Why -&gt;</summary>
       <div class="mt-4 space-y-5">
         <p class="text-sm leading-6 text-[color:var(--color-fg-default)]">{recommendation.explanation.explanation}</p>
 
@@ -169,7 +180,7 @@ const taskInput = task.description;
                     <td>{sentenceCase(recommendation.defaultReachModel.tier)}</td>
                     <td class="rm-code">{formatUsd(recommendation.defaultReachModel.input_cost_per_1k_tokens_usd)}</td>
                     <td class="rm-code">{formatUsd(recommendation.defaultReachModel.output_cost_per_1k_tokens_usd)}</td>
-                    <td class="rm-code">{formatUsdPerCall(estimateCostPer1kCalls(recommendation.defaultReachModel, recommendation.defaultReachModel.tier))}</td>
+                    <td class="rm-code">{formatUsdPerCall(estimateCostPer1kCalls(recommendation.defaultReachModel, recommendation.tier))}</td>
                   </tr>
                 )}
               </tbody>
@@ -195,7 +206,7 @@ const taskInput = task.description;
     </p>
 
     <p class="text-sm text-[color:var(--color-fg-muted)]">
-      Model pricing: provider pricing pages, retrieved {formatDate(pricing.retrieved_at)}. Classification: rightmodel ruleset v1.
+      Model pricing: OpenRouter model catalog, retrieved {formatDate(pricing.retrieved_at)}. Classification: rightmodel ruleset v2.
     </p>
   </section>
 

@@ -1,5 +1,11 @@
 ---
 import { navLinks, siteTitle } from "@/lib/site";
+
+interface Props {
+  showNav?: boolean;
+}
+
+const { showNav = true } = Astro.props;
 ---
 
 <header class="border-b" style="border-color: var(--color-border-muted);">
@@ -7,24 +13,32 @@ import { navLinks, siteTitle } from "@/lib/site";
     <a class="flex items-center gap-3 text-lg font-semibold no-underline" href="/" style="color: var(--color-fg-default);">
       <span
         aria-hidden="true"
-        class="inline-flex h-8 w-8 items-center justify-center rounded-[10px] border text-sm font-semibold"
-        style="border-color: var(--color-accent); background: var(--color-accent-subtle); color: var(--color-accent);"
+        class="relative inline-flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[12px] border bg-white"
+        style="border-color: var(--color-border-muted);"
       >
-        rm
+        <img
+          src="/rightmodel-logo.png"
+          alt=""
+          class="pointer-events-none absolute left-1/2 top-[58%] w-[3.4rem] max-w-none -translate-x-1/2 -translate-y-1/2 select-none"
+          decoding="async"
+          loading="eager"
+        />
       </span>
       <span>{siteTitle}</span>
     </a>
 
-    <nav aria-label="Primary">
-      <ul class="flex items-center gap-4 text-sm font-medium">
-        {navLinks.map((link) => (
-          <li>
-            <a class="link-quiet" href={link.href}>
-              {link.label}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
+    {showNav && (
+      <nav aria-label="Primary">
+        <ul class="flex items-center gap-4 text-sm font-medium">
+          {navLinks.map((link) => (
+            <li>
+              <a class="link-quiet" href={link.href}>
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )}
   </div>
 </header>

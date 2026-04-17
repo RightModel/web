@@ -14,6 +14,7 @@ interface Props {
   titleAbsolute?: boolean;
   ogImagePath?: string;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  showHeaderNav?: boolean;
 }
 
 const {
@@ -24,7 +25,8 @@ const {
   pageWidth = "default",
   titleAbsolute = false,
   ogImagePath = "/og.png",
-  jsonLd
+  jsonLd,
+  showHeaderNav = path !== "/"
 } = Astro.props;
 const siteUrl = import.meta.env.PUBLIC_SITE_URL || defaultSiteUrl;
 const canonical = new URL(path, siteUrl).toString();
@@ -60,7 +62,7 @@ const jsonLdEntries = [...(defaultJsonLd ? [defaultJsonLd] : []), ...(jsonLd ? (
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
-    <meta name="theme-color" content="#575d8d" />
+    <meta name="theme-color" content="#4a5296" />
     <link rel="canonical" href={canonical} />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={siteTitle} />
@@ -94,7 +96,7 @@ const jsonLdEntries = [...(defaultJsonLd ? [defaultJsonLd] : []), ...(jsonLd ? (
   </head>
   <body>
     <div class="progress-line" aria-hidden="true"></div>
-    <Header />
+    <Header showNav={showHeaderNav} />
     <main class:list={["rm-page", pageWidth === "wide" && "rm-page--wide", pageClass]}>
       <slot />
     </main>
