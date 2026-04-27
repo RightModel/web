@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { precomputedAI } from "@/lib/site";
 ---
 
 <BaseLayout title="About" path="/about" pageWidth="wide" pageClass="pt-10" jsonLdType="AboutPage">
@@ -18,6 +19,16 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
       rightmodel is free and intended to stay that way. No signups, no ads, no upsells. The
       classification logic is open source, so if a recommendation looks wrong, open an issue or send
       a pull request with a better signal pattern.
+    </p>
+    <p>
+      rightmodel is a worked example of the <a href={precomputedAI.url}>Precomputed AI</a> design pattern.
+      The pattern moves reusable LLM reasoning into versioned artifacts, then serves those artifacts
+      instantly without live inference on the normal path. In rightmodel, those artifacts
+      are the compiled classification ruleset, task archetypes, pricing snapshots and precomputed
+      explanations. Escalation to a live model is declared, disclosed and opt-in.
+    </p>
+    <p>
+      Cite the pattern as <cite>{precomputedAI.citation}</cite> <a href={precomputedAI.citationUrl}>{precomputedAI.citationUrl}</a>.
     </p>
     <p>
       Find me at <a href="https://regnard.raquedan.com">regnard.raquedan.com</a>, on

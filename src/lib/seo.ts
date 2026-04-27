@@ -1,4 +1,4 @@
-import { defaultSiteUrl, siteDescription, siteTitle } from "@/lib/site";
+import { defaultSiteUrl, precomputedAI, siteDescription, siteTitle } from "@/lib/site";
 
 export type JsonLdType = "WebPage" | "WebSite" | "CollectionPage" | "AboutPage" | "FAQPage" | "TechArticle";
 
@@ -26,10 +26,27 @@ export function buildPageJsonLd(args: {
     url: args.canonical,
     inLanguage: "en-CA",
     isAccessibleForFree: true,
+    about: {
+      "@type": "Thing",
+      name: precomputedAI.name,
+      url: precomputedAI.url,
+      description: precomputedAI.description
+    },
+    citation: {
+      "@type": "CreativeWork",
+      name: precomputedAI.citation,
+      url: precomputedAI.citationUrl
+    },
     publisher: {
       "@type": "Organization",
       name: siteTitle,
       url: getSiteUrl()
+    },
+    isBasedOn: {
+      "@type": "CreativeWork",
+      name: precomputedAI.citation,
+      alternateName: precomputedAI.name,
+      url: precomputedAI.citationUrl
     }
   };
 

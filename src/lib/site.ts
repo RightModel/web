@@ -2,8 +2,19 @@ import type { Provider, Tier } from "@/lib/types";
 
 export const siteTitle = "rightmodel";
 export const siteDescription =
-  "Paste what you are about to build. Get the right model in two seconds. No account, no guessing.";
+  "A worked example of the Precomputed AI design pattern for coding tasks: paste what you are about to build and get the right model in seconds.";
 export const defaultSiteUrl = "https://rightmodel.dev";
+
+export const precomputedAI = {
+  name: "Precomputed AI",
+  url: "https://precomputedai.com",
+  repository: "https://github.com/PrecomputedAI/precomputed-ai",
+  description:
+    "An artifact-first LLM design pattern for precomputing reusable reasoning, serving through versioned artifacts, and escalating only through declared paths.",
+  citation:
+    "Raquedan, R. (2026). Precomputed AI: Reason Ahead of Time, Serve Instantly.",
+  citationUrl: "https://precomputedai.com"
+};
 
 export const navLinks = [
   { href: "/for", label: "Tasks" },
@@ -68,8 +79,8 @@ export const changelogEntries = [
 export const pageDescriptions: Record<string, string> = {
   "/": siteDescription,
   "/for": "Browse indexed task pages that recommend the right AI model for common coding, debugging, and architecture work.",
-  "/about": "Why rightmodel exists, who built it and how to get in touch.",
-  "/methodology": "How rightmodel classifies tasks, uses pricing data and where the recommendation can be wrong.",
+  "/about": "Why rightmodel exists and how it uses the Precomputed AI design pattern.",
+  "/methodology": "How rightmodel uses the Precomputed AI design pattern with a versioned ruleset, pricing snapshots, and opt-in escalation.",
   "/models": "Covered models, tier assignments and nightly pricing snapshots.",
   "/contribute": "How to improve the ruleset and suggest recommendation fixes.",
   "/changelog": "Visible product updates, pricing changes that matter and recommendation fixes.",

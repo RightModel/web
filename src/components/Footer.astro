@@ -1,5 +1,5 @@
 ---
-import { footerLinks } from "@/lib/site";
+import { footerLinks, precomputedAI } from "@/lib/site";
 import { formatDate } from "@/lib/format";
 
 interface Props {
@@ -16,6 +16,7 @@ const { pricingDate } = Astro.props;
       Built by <a href="https://regnard.raquedan.com">Regnard Raquedan</a>. Free and open.
       <a href="https://github.com/rightmodel/web">Contribute on GitHub</a>.
       </p>
+      <p>A worked example of the <a href={precomputedAI.url}>{precomputedAI.name}</a> design pattern.</p>
     </div>
 
     <div class="space-y-2">

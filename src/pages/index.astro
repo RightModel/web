@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getExplanationCache, getPricingCache } from "@/lib/data";
-import { providerOptions } from "@/lib/site";
+import { precomputedAI, providerOptions } from "@/lib/site";
 import { commonTaskSlugs } from "@/lib/tasks";
 
 const rules = (await getCollection("rules")).map((entry) => entry.data);
@@ -113,7 +113,10 @@ const commonTasks = commonTaskSlugs
                 <ul class="mt-2 list-disc pl-5">
                   <li>Any uses a curated shortlist from Anthropic, Google and OpenAI.</li>
                   <li>Model pricing: OpenRouter model catalog, retrieved <span data-sources-date></span>.</li>
-                  <li>Classification: rightmodel ruleset v2, open source under MIT.</li>
+                  <li>
+                    Classification: rightmodel ruleset v2, open source under MIT and a worked example of the
+                    <a href={precomputedAI.url}>Precomputed AI</a> design pattern.
+                  </li>
                   <li>Costs are estimates based on average prompt and completion sizes.</li>
                 </ul>
               </section>

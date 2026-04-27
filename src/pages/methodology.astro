@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getPricingCache } from "@/lib/data";
 import { formatDate } from "@/lib/format";
+import { precomputedAI } from "@/lib/site";
 
 const rules = (await getCollection("rules")).map((entry) => entry.data);
 const pricing = getPricingCache();
@@ -19,6 +20,19 @@ const pricing = getPricingCache();
     <p>
       The classifier is not perfect. It handles most clear cases without an AI call. If the confidence
       score stays below 0.6, the home page offers deep mode for an explicit second pass.
+    </p>
+
+    <h2>Precomputed AI design pattern</h2>
+    <p>
+      rightmodel is a worked example of the <a href={precomputedAI.url}>Precomputed AI</a> design pattern for
+      artifact-first LLM systems. The classification ruleset is produced ahead of time by LLM
+      reasoning, versioned, and served without live inference at request time. Pricing data is
+      refreshed on a nightly schedule and bundled into the static build. Escalation to a live model is
+      declared, opt-in, and disclosed before the user commits. All three required PAI properties are
+      met: versioned artifact, regeneration cadence, declared escalation path.
+    </p>
+    <p>
+      Methodology citation: <cite>{precomputedAI.citation}</cite> <a href={precomputedAI.citationUrl}>{precomputedAI.citationUrl}</a>.
     </p>
 
     <h2>Tier definitions</h2>
