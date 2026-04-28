@@ -5,6 +5,7 @@ import { buildRecommendationForTask, estimateCostPer1kCalls } from "@/lib/classi
 import { getExplanationCache, getPricingCache } from "@/lib/data";
 import { formatDate, formatMultiplier, formatUsd, formatUsdPerCall, sentenceCase } from "@/lib/format";
 import { buildBreadcrumbJsonLd, buildCanonical } from "@/lib/seo";
+import { precomputedAI } from "@/lib/site";
 import type { RecommendationResult } from "@/lib/types";
 
 function buildTaskPageDescription(taskTitle: string, recommendation: RecommendationResult) {
@@ -213,7 +214,7 @@ const taskInput = task.description;
     </p>
 
     <p class="text-sm text-[color:var(--color-fg-muted)]">
-      Model pricing: OpenRouter model catalog, retrieved {formatDate(pricing.retrieved_at)}. Classification: rightmodel ruleset v2.
+      Model pricing: OpenRouter model catalog, retrieved {formatDate(pricing.retrieved_at)}. Classification: rightmodel ruleset v2. This recommendation cost zero tokens — a worked example of the <a href={precomputedAI.url}>Precomputed AI</a> design pattern.
     </p>
   </section>
 

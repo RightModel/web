@@ -21,11 +21,11 @@ import { precomputedAI } from "@/lib/site";
       a pull request with a better signal pattern.
     </p>
     <p>
-      rightmodel is a worked example of the <a href={precomputedAI.url}>Precomputed AI</a> design pattern.
-      The pattern moves reusable LLM reasoning into versioned artifacts, then serves those artifacts
-      instantly without live inference on the normal path. In rightmodel, those artifacts
-      are the compiled classification ruleset, task archetypes, pricing snapshots and precomputed
-      explanations. Escalation to a live model is declared, disclosed and opt-in.
+      rightmodel is a worked example of the <a href={precomputedAI.url}>Precomputed AI</a> design pattern —
+      specifically the Ruleset Compilation and Heuristic-First, LLM-Escalated patterns. The compiled
+      classification ruleset, task archetypes, pricing snapshots and precomputed explanations are the
+      versioned artifacts. They are served without live inference on the normal path. Escalation to a
+      live model via deep analysis is declared, disclosed and opt-in.
     </p>
     <p>
       Cite the pattern as <cite>{precomputedAI.citation}</cite> <a href={precomputedAI.citationUrl}>{precomputedAI.citationUrl}</a>.

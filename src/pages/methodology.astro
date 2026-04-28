@@ -24,15 +24,26 @@ const pricing = getPricingCache();
 
     <h2>Precomputed AI design pattern</h2>
     <p>
-      rightmodel is a worked example of the <a href={precomputedAI.url}>Precomputed AI</a> design pattern for
-      artifact-first LLM systems. The classification ruleset is produced ahead of time by LLM
-      reasoning, versioned, and served without live inference at request time. Pricing data is
-      refreshed on a nightly schedule and bundled into the static build. Escalation to a live model is
-      declared, opt-in, and disclosed before the user commits. All three required PAI properties are
-      met: versioned artifact, regeneration cadence, declared escalation path.
+      rightmodel is a worked example of the <a href={precomputedAI.url}>Precomputed AI</a> design pattern —
+      an artifact-first LLM architecture where reasoning is moved into versioned artifacts produced
+      ahead of time, with live inference reserved for declared escalation paths. A request to
+      rightmodel costs zero tokens. The ruleset decides; the page renders.
     </p>
     <p>
-      Methodology citation: <cite>{precomputedAI.citation}</cite> <a href={precomputedAI.citationUrl}>{precomputedAI.citationUrl}</a>.
+      Two PAI patterns apply here. <strong>Ruleset Compilation</strong>: the model recommendation
+      logic is compiled into a versioned JSON artifact mapping coding task signals to model tiers.
+      The LLM is not in the request path. <strong>Heuristic-First, LLM-Escalated</strong>: when
+      the ruleset confidence stays below 0.6, the user is offered deep analysis — a live LLM call
+      with cost disclosed before it fires. That is the escalation contract in production.
+    </p>
+    <p>
+      All three required PAI properties are met: versioned artifact (the compiled ruleset and
+      precomputed explanations), regeneration cadence (pricing refreshes nightly via GitHub Actions
+      and bundles into the static build), declared escalation path (deep analysis, opt-in,
+      cost-disclosed). Patterns documented at <a href={precomputedAI.repository}>{precomputedAI.repository}</a>.
+    </p>
+    <p>
+      Citation: <cite>{precomputedAI.citation}</cite> <a href={precomputedAI.citationUrl}>{precomputedAI.citationUrl}</a>.
     </p>
 
     <h2>Tier definitions</h2>

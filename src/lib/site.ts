@@ -10,7 +10,7 @@ export const precomputedAI = {
   url: "https://precomputedai.com",
   repository: "https://github.com/PrecomputedAI/precomputed-ai",
   description:
-    "An artifact-first LLM design pattern for precomputing reusable reasoning, serving through versioned artifacts, and escalating only through declared paths.",
+    "A design pattern for moving LLM reasoning into artifacts produced ahead of time, with live inference reserved for declared escalation paths.",
   citation:
     "Raquedan, R. (2026). Precomputed AI: Reason Ahead of Time, Serve Instantly.",
   citationUrl: "https://precomputedai.com"
