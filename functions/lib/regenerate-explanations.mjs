@@ -1,5 +1,6 @@
 import { Storage } from "@google-cloud/storage";
 import { GoogleGenAI } from "@google/genai";
+import { logger } from "firebase-functions";
 import { requireEnv } from "./config.mjs";
 import { getRequiredSecret } from "./secrets.mjs";
 
@@ -86,7 +87,7 @@ async function generateText(prompt, apiKey) {
     }
   });
 
-  return response.text || "";
+  return { text: response.text || "", usageMetadata: response.usageMetadata };
 }
 
 async function generateTierExplanation(tier, apiKey) {
@@ -98,9 +99,9 @@ Recommended models: ${config.recommended}
 Overkill model: ${config.overkill}
 
 Write exactly 2 to 3 sentences. Explain why this task class fits the recommended tier and why the larger option adds cost without enough benefit. Avoid marketing language and avoid hedging.`;
-  const generated = await generateText(prompt, apiKey);
+  const { text: generated, usageMetadata } = await generateText(prompt, apiKey);
 
-  return validateExplanation(generated) ? generated : "";
+  return { text: validateExplanation(generated) ? generated : "", usageMetadata };
 }
 
 function cloneForProvider(provider, copy) {
@@ -116,13 +117,18 @@ export async function regenerateExplanationCache() {
 
   const generatedAt = new Date().toISOString();
   const allTiers = structuredClone(DEFAULT_TIER_COPY);
+  let totalPromptTokens = 0;
+  let totalCompletionTokens = 0;
 
   for (const tier of Object.keys(DEFAULT_TIER_COPY)) {
-    const generated = await generateTierExplanation(tier, apiKey);
+    const { text: generated, usageMetadata } = await generateTierExplanation(tier, apiKey);
 
     if (generated) {
       allTiers[tier].explanation = generated;
     }
+
+    totalPromptTokens += usageMetadata?.promptTokenCount || 0;
+    totalCompletionTokens += usageMetadata?.candidatesTokenCount || 0;
   }
 
   const baseCache = {
@@ -158,6 +164,14 @@ export async function regenerateExplanationCache() {
       contentType: "application/json"
     });
   }
+
+  const model = process.env.RIGHTMODEL_VERTEX_MODEL || "gemini-2.5-flash";
+  logger.info("regeneration_usage", {
+    prompt_tokens: totalPromptTokens,
+    completion_tokens: totalCompletionTokens,
+    calls: Object.keys(DEFAULT_TIER_COPY).length,
+    model
+  });
 
   return baseCache;
 }

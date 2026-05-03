@@ -2,6 +2,9 @@ import { buildRecommendation, estimateCostPer1kCalls } from "@/lib/classifier";
 import { formatDate, formatMultiplier, formatUsd, formatUsdPerCall, sentenceCase } from "@/lib/format";
 import type { ExplanationCache, PricingCache, Provider, RecommendationResult, Tier, TierRule } from "@/lib/types";
 
+let lastTrackedInput = "";
+let lastTrackedDeepInput = "";
+
 function isTier(value: unknown): value is Tier {
   return value === "routine" || value === "moderate" || value === "deep";
 }
@@ -208,6 +211,30 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
       return;
     }
 
+    const isDeepSource = state.deep && state.deepTier !== null;
+    const source = isDeepSource ? "deep" : "heuristic";
+    const currentInput = state.q.trim();
+    if (currentInput) {
+      const alreadyTracked = isDeepSource ? lastTrackedDeepInput : lastTrackedInput;
+      if (currentInput !== alreadyTracked) {
+        if (isDeepSource) {
+          lastTrackedDeepInput = currentInput;
+        } else {
+          lastTrackedInput = currentInput;
+        }
+        // @ts-ignore
+        if (typeof gtag !== "undefined") {
+          // @ts-ignore
+          gtag("event", "recommendation_served", {
+            tier: recommendation.tier,
+            confidence: recommendation.confidence,
+            provider: state.provider,
+            source
+          });
+        }
+      }
+    }
+
     output.hidden = false;
     secondaryControls.hidden = false;
     outputCard.dataset.tier = recommendation.tier;
@@ -260,6 +287,14 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
       return;
     }
 
+    // @ts-ignore
+    if (typeof gtag !== "undefined") {
+      // @ts-ignore
+      gtag("event", "deep_analysis_requested", {
+        heuristic_tier: state.recommendation.tier
+      });
+    }
+
     deepStatus = "loading";
     deepPrompt.hidden = false;
     deepProgress.hidden = false;
@@ -302,6 +337,15 @@ export function setupHomePage({ rules, pricing, explanations, deepAnalysisEndpoi
 
       state.deep = true;
       state.deepTier = payload.tier;
+      // @ts-ignore
+      if (typeof gtag !== "undefined") {
+        // @ts-ignore
+        gtag("event", "deep_analysis_complete", {
+          heuristic_tier: state.heuristicRecommendation?.tier,
+          deep_tier: payload.tier,
+          changed: state.heuristicRecommendation?.tier !== payload.tier ? "true" : "false"
+        });
+      }
       deepStatus = "idle";
       deepDismissed = false;
       deepProgress.hidden = true;

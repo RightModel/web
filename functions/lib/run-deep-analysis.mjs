@@ -1,4 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
+import { logger } from "firebase-functions";
 import { getRequiredSecret } from "./secrets.mjs";
 
 const VALID_TIERS = ["routine", "moderate", "deep"];
@@ -47,5 +48,10 @@ Pick the lowest tier that still fits. A task that names a single well-known algo
   });
 
   const parsed = JSON.parse(response.text || "{}");
+  logger.info("deep_analysis_usage", {
+    prompt_tokens: response.usageMetadata?.promptTokenCount,
+    completion_tokens: response.usageMetadata?.candidatesTokenCount,
+    model
+  });
   return { tier: normalizeTier(parsed.tier) };
 }
