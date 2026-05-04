@@ -8,5 +8,4 @@ related_slugs:
   - add-role-based-access-control
 seo:
   h1: Which AI model should you use to implement form validation?
-  meta_description: Form validation work is moderate. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
   title_tag: Best AI model for form validation — rightmodel

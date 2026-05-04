@@ -8,5 +8,4 @@ related_slugs:
   - generate-openapi-schema-example
 seo:
   h1: Which AI model should you use to write unit tests for an Express API?
-  meta_description: Writing Express API tests is routine work. Use Gemini Flash 2.0. Claude Sonnet 4 is ~9× pricier here.
   title_tag: Best AI model for Express API tests — rightmodel

@@ -8,5 +8,4 @@ related_slugs:
   - audit-authentication-flow
 seo:
   h1: Which AI model should you use to design multi tenant permissions?
-  meta_description: Multi tenant permissions need deeper reasoning. Use Claude Opus 4. Claude Sonnet 4 is cheaper, but this is worth paying up.
   title_tag: Best AI model for tenant permissions — rightmodel

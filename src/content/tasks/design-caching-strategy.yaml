@@ -8,5 +8,4 @@ related_slugs:
   - debug-api-timeout
 seo:
   h1: Which AI model should you use to design a caching strategy?
-  meta_description: Caching strategy design needs deeper reasoning. Use Claude Opus 4. Claude Sonnet 4 is cheaper, but this is worth paying up.
   title_tag: Best AI model for caching strategy — rightmodel

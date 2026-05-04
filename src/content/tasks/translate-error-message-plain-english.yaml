@@ -8,5 +8,4 @@ related_slugs:
   - write-regex-pattern
 seo:
   h1: Which AI model should you use to translate an error message to plain English?
-  meta_description: Error message translation is routine work. Use Gemini Flash 2.0. Claude Sonnet 4 is ~9× pricier here.
   title_tag: Best AI model for error translation — rightmodel

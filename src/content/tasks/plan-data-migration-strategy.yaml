@@ -8,5 +8,4 @@ related_slugs:
   - review-kubernetes-deployment-risk
 seo:
   h1: Which AI model should you use to plan a data migration strategy?
-  meta_description: Data migration planning needs deeper reasoning. Use Claude Opus 4. Claude Sonnet 4 is cheaper, but this is worth paying up.
   title_tag: Best AI model for data migrations — rightmodel

@@ -8,5 +8,4 @@ related_slugs:
   - fix-failing-unit-test
 seo:
   h1: Which AI model should you use to debug a CI pipeline failure?
-  meta_description: CI pipeline debugging is moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
   title_tag: Best AI model for CI failures — rightmodel

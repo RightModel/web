@@ -22,7 +22,6 @@ export interface TierRule {
 
 export interface TaskSeo {
   h1: string;
-  meta_description: string;
   title_tag: string;
 }
 

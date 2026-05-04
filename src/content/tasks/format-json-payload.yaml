@@ -8,5 +8,4 @@ related_slugs:
   - generate-openapi-schema-example
 seo:
   h1: Which AI model should you use to format a JSON payload?
-  meta_description: Formatting JSON is routine work. Use Gemini Flash 2.0. Claude Sonnet 4 is ~9× pricier here.
   title_tag: Best AI model for JSON formatting — rightmodel

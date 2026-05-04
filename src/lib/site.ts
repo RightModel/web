@@ -2,7 +2,7 @@ import type { Provider, Tier } from "@/lib/types";
 
 export const siteTitle = "rightmodel";
 export const siteDescription =
-  "A worked example of the Precomputed AI design pattern for coding tasks: paste what you are about to build and get the right model in seconds.";
+  "Paste a coding task, get the cheapest AI model that fits the reasoning load. Free, instant, with current pricing from Anthropic, Google and OpenAI.";
 export const defaultSiteUrl = "https://rightmodel.dev";
 
 export const precomputedAI = {

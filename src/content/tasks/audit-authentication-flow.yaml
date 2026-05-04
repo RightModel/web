@@ -8,5 +8,4 @@ related_slugs:
   - refactor-authentication-middleware
 seo:
   h1: Which AI model should you use to audit an authentication flow?
-  meta_description: Auth flow audits need deeper reasoning. Use Claude Opus 4. Claude Sonnet 4 is cheaper, but this is worth paying up.
   title_tag: Best AI model for auth audits — rightmodel

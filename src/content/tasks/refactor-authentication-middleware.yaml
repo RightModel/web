@@ -8,5 +8,4 @@ related_slugs:
   - implement-rest-api-endpoint
 seo:
   h1: Which AI model should you use to refactor authentication middleware?
-  meta_description: Auth middleware refactors are moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
   title_tag: Best AI model for auth middleware refactors — rightmodel

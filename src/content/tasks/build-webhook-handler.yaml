@@ -8,5 +8,4 @@ related_slugs:
   - write-github-actions-workflow
 seo:
   h1: Which AI model should you use to build a webhook handler?
-  meta_description: Webhook handler work is moderate. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
   title_tag: Best AI model for webhooks — rightmodel

@@ -8,5 +8,4 @@ related_slugs:
   - diagnose-distributed-tracing-gap
 seo:
   h1: Which AI model should you use to debug an async race condition?
-  meta_description: Async race conditions need deeper reasoning. Use Claude Opus 4. Claude Sonnet 4 is cheaper, but this is worth paying up.
-  title_tag: Best AI model for race conditions — rightmodel
+  title_tag: "Debug async race conditions: which AI model — rightmodel"

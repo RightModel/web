@@ -8,5 +8,4 @@ related_slugs:
   - design-microservices-api
 seo:
   h1: Which AI model should you use to design a SaaS database schema?
-  meta_description: SaaS schema design needs deeper reasoning. Use Claude Opus 4. Claude Sonnet 4 is cheaper, but this is worth paying up.
-  title_tag: Best AI model for SaaS schemas — rightmodel
+  title_tag: "SaaS database schema: which AI model to use — rightmodel"

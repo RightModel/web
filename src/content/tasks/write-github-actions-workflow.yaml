@@ -8,5 +8,4 @@ related_slugs:
   - build-webhook-handler
 seo:
   h1: Which AI model should you use to write a GitHub Actions workflow?
-  meta_description: GitHub Actions workflows are moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
   title_tag: Best AI model for GitHub Actions — rightmodel

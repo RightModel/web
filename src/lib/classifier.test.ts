@@ -75,8 +75,6 @@ describe("classifier", async () => {
         related_slugs: ["review-sql-injection-risk", "audit-authentication-flow"],
         seo: {
           h1: "Which AI model should you use to review a pull request for security?",
-          meta_description:
-            "Security review needs deeper reasoning. Use Claude Opus 4. Claude Sonnet 4 is cheaper, but this is worth paying up.",
           title_tag: "Best AI model for security PR review — rightmodel"
         }
       },

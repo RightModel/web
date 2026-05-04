@@ -8,5 +8,4 @@ related_slugs:
   - diagnose-distributed-tracing-gap
 seo:
   h1: Which AI model should you use to debug a memory leak in Node?
-  meta_description: Memory leak debugging needs deeper reasoning. Use Claude Opus 4. Claude Sonnet 4 is cheaper, but this is worth paying up.
   title_tag: Best AI model for Node memory leaks — rightmodel

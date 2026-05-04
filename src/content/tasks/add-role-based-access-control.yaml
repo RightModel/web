@@ -8,5 +8,4 @@ related_slugs:
   - design-multi-tenant-permissions
 seo:
   h1: Which AI model should you use to add role based access control?
-  meta_description: RBAC implementation is moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
   title_tag: Best AI model for RBAC work — rightmodel

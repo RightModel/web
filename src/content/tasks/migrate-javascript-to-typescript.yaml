@@ -8,5 +8,4 @@ related_slugs:
   - refactor-legacy-javascript-module
 seo:
   h1: Which AI model should you use to migrate JavaScript code to TypeScript?
-  meta_description: JS to TS migrations are moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
   title_tag: Best AI model for JS to TS migrations — rightmodel

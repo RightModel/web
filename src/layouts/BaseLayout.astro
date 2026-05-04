@@ -2,7 +2,7 @@
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import { getPricingCache } from "@/lib/data";
-import { defaultSiteUrl, pageDescriptions, precomputedAI, siteDescription, siteTitle } from "@/lib/site";
+import { defaultSiteUrl, pageDescriptions, siteDescription, siteTitle } from "@/lib/site";
 import { buildPageJsonLd, type JsonLdType } from "@/lib/seo";
 import "@/styles/global.css";
 
@@ -48,38 +48,7 @@ const defaultJsonLd =
           description: pageDescription,
           canonical,
           image: imageUrl
-        }),
-        {
-        "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
-        applicationCategory: "DeveloperApplication",
-        name: siteTitle,
-        operatingSystem: "Web",
-        url: canonical,
-        description: siteDescription,
-        about: {
-          "@type": "Thing",
-          name: precomputedAI.name,
-          url: precomputedAI.url,
-          description: precomputedAI.description
-        },
-        citation: {
-          "@type": "CreativeWork",
-          name: precomputedAI.citation,
-          url: precomputedAI.citationUrl
-        },
-        offers: {
-          "@type": "Offer",
-          price: "0",
-          priceCurrency: "USD"
-        },
-        isBasedOn: {
-          "@type": "CreativeWork",
-          name: precomputedAI.citation,
-          alternateName: precomputedAI.name,
-          url: precomputedAI.citationUrl
-        }
-        }
+        })
       ]
     : [
         buildPageJsonLd({

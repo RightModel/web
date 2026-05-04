@@ -33,7 +33,6 @@ const tasks = defineCollection({
     related_slugs: z.array(z.string()).min(2).max(4),
     seo: z.object({
       h1: z.string().min(1).max(80),
-      meta_description: z.string().min(1).max(155),
       title_tag: z.string().min(1).max(60)
     })
   })

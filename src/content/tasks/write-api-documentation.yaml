@@ -8,5 +8,4 @@ related_slugs:
   - write-cli-usage-examples
 seo:
   h1: Which AI model should you use to write API documentation?
-  meta_description: API docs are moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more for little gain here.
   title_tag: Best AI model for API docs — rightmodel

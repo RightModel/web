@@ -8,5 +8,4 @@ related_slugs:
   - debug-intermittent-production-error
 seo:
   h1: Which AI model should you use to debug an API timeout?
-  meta_description: API timeout debugging is moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
-  title_tag: Best AI model for API timeouts — rightmodel
+  title_tag: "Debug API timeouts: which AI model to use — rightmodel"

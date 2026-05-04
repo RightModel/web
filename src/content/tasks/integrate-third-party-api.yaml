@@ -8,5 +8,4 @@ related_slugs:
   - convert-curl-to-fetch
 seo:
   h1: Which AI model should you use to integrate a third party API?
-  meta_description: Third party API integration is moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
   title_tag: Best AI model for API integrations — rightmodel

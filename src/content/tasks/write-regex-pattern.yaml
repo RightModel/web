@@ -8,5 +8,4 @@ related_slugs:
   - write-sql-query-from-requirements
 seo:
   h1: Which AI model should you use to write a regex pattern?
-  meta_description: Writing a regex is routine work. Use Gemini Flash 2.0. Claude Sonnet 4 is ~9× pricier here.
   title_tag: Best AI model for regex writing — rightmodel

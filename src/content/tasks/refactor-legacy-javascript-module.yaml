@@ -8,5 +8,4 @@ related_slugs:
   - document-codebase-functions
 seo:
   h1: Which AI model should you use to refactor a legacy JavaScript module?
-  meta_description: Legacy module refactors are moderate work. Use Claude Sonnet 4. Claude Opus 4 costs far more here.
   title_tag: Best AI model for legacy JS refactors — rightmodel
