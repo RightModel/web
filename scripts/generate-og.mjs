@@ -16,8 +16,10 @@ const svg = `
   <rect x="40" y="40" width="${width - 80}" height="${height - 80}" rx="24" fill="#f2f1f5" stroke="#cec9da" stroke-width="2" />
   <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" fill="#1f2030">
     <text x="92" y="128" font-size="42" font-weight="600">rightmodel</text>
-    <text x="92" y="278" font-size="64" font-weight="600">Use the right model.</text>
-    <text x="92" y="350" font-size="34" fill="#52566a">Precomputed AI worked example for coding tasks.</text>
+    <text x="92" y="258" font-size="64" font-weight="600">Find the best AI model</text>
+    <text x="92" y="338" font-size="64" font-weight="600">for your coding task.</text>
+    <text x="92" y="410" font-size="34" fill="#52566a">Free, instant, with current pricing from</text>
+    <text x="92" y="458" font-size="34" fill="#52566a">Anthropic, Google and OpenAI.</text>
     <text x="${width - 92}" y="${height - 92}" text-anchor="end" font-size="24" fill="#676b80">rightmodel.dev</text>
   </g>
 </svg>`;
