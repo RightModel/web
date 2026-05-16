@@ -6,6 +6,6 @@ Precomputed AI citation: Raquedan, R. (2026). *Precomputed AI: Reason Ahead of T
 
 Production URL: `https://rightmodel.dev`
 
-The site is built with Astro and Tailwind, uses a client-side heuristic classifier, and ships nightly pricing caches into a static build. More detail lives in [`docs/SPEC.md`](docs/SPEC.md), [`docs/BRAND.md`](docs/BRAND.md), and [`docs/OPERATIONS.md`](docs/OPERATIONS.md).
+The site is built with Astro and Tailwind, uses a client-side heuristic classifier, and ships nightly pricing caches into a static build. .
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for ruleset changes and pull request expectations.
