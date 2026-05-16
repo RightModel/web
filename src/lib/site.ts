@@ -65,6 +65,11 @@ export const tierStyles: Record<Tier, { fg: string; bg: string; accent: string }
 
 export const changelogEntries = [
   {
+    date: "2026-05-16",
+    type: "Added",
+    entry: "Published versioned JSON endpoints for rulesets, tier mappings, and pricing for external agentic consumption. Added provenance manifest."
+  },
+  {
     date: "2026-07-25",
     type: "Updated",
     entry: "Refreshed Anthropic pricing snapshot and tightened routing for security review tasks."
