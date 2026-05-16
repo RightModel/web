@@ -1,4 +1,5 @@
 import { defineCollection, z } from "astro:content";
+import { glob } from "astro/loaders";
 
 const signalSchema = z.object({
   match_verbs: z.array(z.string()).default([]),
@@ -10,7 +11,7 @@ const signalSchema = z.object({
 });
 
 const rules = defineCollection({
-  type: "data",
+  loader: glob({ pattern: "**/*.yaml", base: "./src/content/rules" }),
   schema: z.object({
     tier: z.enum(["routine", "moderate", "deep"]),
     label: z.string(),
@@ -21,7 +22,7 @@ const rules = defineCollection({
 });
 
 const tasks = defineCollection({
-  type: "data",
+  loader: glob({ pattern: "**/*.yaml", base: "./src/content/tasks" }),
   schema: z.object({
     slug: z
       .string()

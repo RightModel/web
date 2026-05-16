@@ -38,17 +38,12 @@ const schema = {
     seo: {
       type: "object",
       additionalProperties: false,
-      required: ["h1", "meta_description", "title_tag"],
+      required: ["h1", "title_tag"],
       properties: {
         h1: {
           type: "string",
           minLength: 1,
           maxLength: 80
-        },
-        meta_description: {
-          type: "string",
-          minLength: 1,
-          maxLength: 155
         },
         title_tag: {
           type: "string",
@@ -108,11 +103,6 @@ for (const task of tasks) {
   if (!/^Which AI model|^What AI model|^Best AI model/.test(task.seo.h1)) {
     hasError = true;
     console.error(`Invalid H1 prefix for task ${task.slug}`);
-  }
-
-  if (!task.seo.meta_description.includes("Use ")) {
-    hasError = true;
-    console.error(`Meta description for ${task.slug} should name the recommendation.`);
   }
 
   for (const relatedSlug of task.related_slugs) {
