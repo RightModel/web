@@ -68,6 +68,40 @@ const pricing = getPricingCache();
       <li>Provider-specific limits outside the covered model list</li>
     </ul>
 
+    <h2>Consuming the published ruleset</h2>
+    <p>
+      rightmodel publishes its ruleset, tier-mapping, and pricing snapshots as versioned, static JSON endpoints.
+      This allows agent frameworks (LangGraph, CrewAI, AutoGen, Mastra) and other downstream developer tools to embed the same deterministic routing logic locally without adding runtime dependencies or latency.
+    </p>
+    <p>
+      Artifacts are published at:
+    </p>
+    <ul>
+      <li><a href="/data/ruleset.json"><code>/data/ruleset.json</code></a> — compiled reasoning paths and signal thresholds.</li>
+      <li><a href="/data/tier-mapping.json"><code>/data/tier-mapping.json</code></a> — maps model slugs to reasoning tiers.</li>
+      <li><a href="/data/pricing.json"><code>/data/pricing.json</code></a> — nightly OpenRouter cache.</li>
+      <li><a href="/data/manifest.json"><code>/data/manifest.json</code></a> — hashes (sha256), git commit, and schema versioning.</li>
+    </ul>
+
+    <h3>Why this architecture matters</h3>
+    <p>
+      These endpoints are not a traditional authenticated API; they are compiled artifacts served by a CDN. They provide verifiable integrity (via content hashes), reproducible build artifacts, and strict version pinning. 
+    </p>
+    <p>
+      For AI documentation and audit workflows, this artifact shape provides a stable, defensible record of <em>why</em> a specific model was routed for a specific class of task, solving a significant compliance pain point.
+    </p>
+
+    <h3>Example: Fetching the ruleset</h3>
+    <p>In JavaScript/TypeScript:</p>
+    <pre><code class="language-javascript">const res = await fetch("https://rightmodel.dev/data/ruleset.json");
+const { rules } = await res.json();
+// Apply routing logic based on rule signals</code></pre>
+    <p>In Python:</p>
+    <pre><code class="language-python">import requests
+res = requests.get("https://rightmodel.dev/data/ruleset.json")
+rules = res.json()["rules"]
+# Apply routing logic based on rule signals</code></pre>
+
     <h2>Pricing data</h2>
     <p>
       Pricing is refreshed nightly from the OpenRouter model catalog and bundled into the static build.
